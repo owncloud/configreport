@@ -47,6 +47,7 @@ class ReportController extends Controller {
     /**
      * AJAX handler for getting the config report
      *
+	 * @NoCSRFRequired
      * @return ReportResponse with the report
      */
     public function getReport() {
@@ -59,7 +60,6 @@ class ReportController extends Controller {
 
         $l = \OC::$server->getL10N('config_report');
 
-        $error = false;
 
         // Basic report data
         // TODO $homecount should be determined by \OC::$server->getUserManager()->search()
