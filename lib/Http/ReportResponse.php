@@ -16,12 +16,15 @@
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
  */
+
 namespace OCA\ConfigReport\Http;
 
 use OCP\AppFramework\Http\DownloadResponse;
 
+/**
+ * @package OCA\ConfigReport\Http
+ */
 class ReportResponse extends DownloadResponse {
 
     /**

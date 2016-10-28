@@ -16,7 +16,6 @@
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
  */
 
 namespace OCA\ConfigReport\Controller;
@@ -40,6 +39,11 @@ class ReportController extends Controller {
      */
     private $config;
 
+    /**
+     * @param string $AppName
+     * @param IRequest $request
+     * @param IConfig $config
+     */
     public function __construct($AppName, IRequest $request, IConfig $config) {
         parent::__construct($AppName, $request);
         $this->config = $config;
@@ -56,5 +60,4 @@ class ReportController extends Controller {
 
         return new ReportResponse('', '', $reportDataCollector->getReportJson());
     }
-
 }
