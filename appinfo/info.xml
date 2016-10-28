@@ -16,4 +16,7 @@
 	</dependencies>
 	<shipped>true</shipped>
 	<default_enable/>
+	<commands>
+		<command>OCA\ConfigReport\Command\ConfigReport</command>
+	</commands>
 </info>
