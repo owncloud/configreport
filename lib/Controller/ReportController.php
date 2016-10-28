@@ -52,9 +52,9 @@ class ReportController extends Controller {
      * @return ReportResponse with the report
      */
     public function getReport() {
-        $repostDataCollector = new ReportDataCollector();
+        $reportDataCollector = new ReportDataCollector();
 
-        return new ReportResponse($repostDataCollector->getReport());
+        return new ReportResponse('', '', $reportDataCollector->getReport());
     }
 
 }

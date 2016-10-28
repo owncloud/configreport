@@ -20,7 +20,6 @@
  */
 namespace OCA\ConfigReport\Http;
 
-
 use OCP\AppFramework\Http\DownloadResponse;
 
 class ReportResponse extends DownloadResponse {
@@ -30,13 +29,29 @@ class ReportResponse extends DownloadResponse {
      */
     private $data;
 
-    public function __construct(array $data) {
-        parent::__construct('config_report_' . date('Ymd') . '.json', 'text/json');
-        $this->data = $data;
+	/**
+	 * ReportResponse constructor.
+	 *
+	 * @param string $fileName
+	 * @param string $contentType
+	 * @param array $data
+	 */
+    public function __construct($fileName, $contentType, array $data) {
+		$this->data = $data;
+
+		$fileName = $fileName ? $fileName : 'config_report_' . date('Ymd') . '.json';
+		$contentType = $contentType ? $contentType : 'text/json';
+
+		parent::__construct($fileName, $contentType);
     }
 
+	/**
+	 * @return string
+	 */
     public function render() {
-        $settings = defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 0;
-        return json_encode($this->data, $settings);
+        return json_encode(
+        	$this->data,
+			defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 0
+		);
     }
 }
