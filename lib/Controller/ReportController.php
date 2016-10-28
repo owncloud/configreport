@@ -54,7 +54,7 @@ class ReportController extends Controller {
     public function getReport() {
         $reportDataCollector = new ReportDataCollector();
 
-        return new ReportResponse('', '', $reportDataCollector->getReport());
+        return new ReportResponse('', '', $reportDataCollector->getReportJson());
     }
 
 }

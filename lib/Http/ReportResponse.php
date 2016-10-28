@@ -34,9 +34,9 @@ class ReportResponse extends DownloadResponse {
 	 *
 	 * @param string $fileName
 	 * @param string $contentType
-	 * @param array $data
+	 * @param string $data
 	 */
-    public function __construct($fileName, $contentType, array $data) {
+    public function __construct($fileName, $contentType, $data) {
 		$this->data = $data;
 
 		$fileName = $fileName ? $fileName : 'config_report_' . date('Ymd') . '.json';
@@ -49,9 +49,6 @@ class ReportResponse extends DownloadResponse {
 	 * @return string
 	 */
     public function render() {
-        return json_encode(
-        	$this->data,
-			defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 0
-		);
+        return $this->data;
     }
 }

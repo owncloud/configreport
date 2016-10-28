@@ -4,6 +4,18 @@ namespace OCA\ConfigReport\Report;
 
 class ReportDataCollector {
 
+	/**
+	 * @param int $options
+	 * @param int $depth
+	 * @return string
+	 */
+	public function getReportJson($options = JSON_PRETTY_PRINT, $depth = 512) {
+		return json_encode($this->getReport(), $options, $depth);
+	}
+
+	/**
+	 * @return array
+	 */
 	public function getReport() {
 		// TODO: add l10n (unused right now)
 		//$l = \OC::$server->getL10N('config_report');
