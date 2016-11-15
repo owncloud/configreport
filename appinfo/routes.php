@@ -19,9 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-use OCP\AppFramework\App;
+namespace OCA\ConfigReport\AppInfo;
 
-$application = new App('configreport');
+use OCP\AppFramework\App;
+$application = new Application('configreport');
+
 $application->registerRoutes(
     $this,
     [

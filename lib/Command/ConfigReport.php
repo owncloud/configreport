@@ -18,7 +18,7 @@
 
 namespace OCA\ConfigReport\Command;
 
-use OCA\ConfigReport\Report\ReportDataCollector;
+use OCA\ConfigReport\ReportDataCollector;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,8 +30,16 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ConfigReport extends Command {
 
-	public function __construct() {
+	/**
+	 * @var ReportDataCollector
+	 */
+	private $reportDataCollector;
 
+	/**
+	 * @param ReportDataCollector|null $reportDataCollector
+	 */
+	public function __construct(ReportDataCollector $reportDataCollector) {
+		$this->reportDataCollector = $reportDataCollector;
 		parent::__construct();
 	}
 
@@ -42,7 +50,7 @@ class ConfigReport extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$reportDataCollector = new ReportDataCollector();
-		$output->writeln($reportDataCollector->getReportJson());
+
+		$output->writeln($this->reportDataCollector->getReportJson());
 	}
 }

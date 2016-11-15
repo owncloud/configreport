@@ -16,12 +16,120 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-namespace OCA\ConfigReport\Report;
+namespace OCA\ConfigReport;
+use OC\IntegrityCheck\Checker;
+use OC\OCSClient;
+use OC\SystemConfig;
+use OC\User\Manager;
+use OCP\IAppConfig;
 
 /**
  * @package OCA\ConfigReport\Report
  */
 class ReportDataCollector {
+
+	/**
+	 * @var Checker
+	 */
+	private $integrityChecker;
+
+	/**
+	 * @var array
+	 */
+	private $users;
+
+	/**
+	 * @var Manager
+	 */
+	private $userManager;
+
+	/**
+	 * @var string
+	 */
+	private $licenseKey;
+
+	/**
+	 * @var array
+	 */
+	private $version;
+
+	/**
+	 * @var string
+	 */
+	private $versionString;
+
+	/**
+	 * @var string
+	 */
+	private $editionString;
+
+	/**
+	 * @var string
+	 */
+	private $displayName;
+
+	/**
+	 * @var \OC\SystemConfig
+	 */
+	private $systemConfig;
+
+	/**
+	 * @var OCSClient
+	 */
+	private $ocsClient;
+
+	/**
+	 * @var array
+	 */
+	private $apps;
+
+	/**
+	 * @var IAppConfig
+	 */
+	private $appConfig;
+
+	/**
+	 * @param Checker $integrityChecker
+	 * @param array $users
+	 * @param Manager $userManager
+	 * @param string $licenseKey
+	 * @param array $version
+	 * @param string $versionString
+	 * @param string $editionString
+	 * @param string $displayName
+	 * @param SystemConfig $systemConfig
+	 * @param OCSClient $ocsClient
+	 * @param IAppConfig $appConfig
+	 */
+	public function __construct(
+		Checker $integrityChecker,
+		array $users,
+		Manager $userManager,
+		string $licenseKey,
+		array $version,
+		string $versionString,
+		string $editionString,
+		string $displayName,
+		SystemConfig $systemConfig,
+		OCSClient $ocsClient,
+		IAppConfig $appConfig
+	) {
+		$this->integrityChecker = $integrityChecker; //\OC::$server->getIntegrityCodeChecker()
+		$this->users = $users; //\OC_User::getUsers()
+		$this->userManager = $userManager; //\OC::$server->getUserManager();
+		$this->licenseKey = $licenseKey; //\OC::$server->getConfig()->getSystemValue('license-key');
+
+		$this->version = $version; //\OC_Util::getVersion()
+		$this->versionString = $versionString; //\OC_Util::getVersionString()
+		$this->editionString = $editionString; //\OC_Util::getEditionString()
+		$this->displayName = $displayName; //\OCP\User::getDisplayName()
+
+		$this->systemConfig = $systemConfig; //\OC::$server->getSystemConfig();
+		$this->ocsClient = $ocsClient; //\OC::$server->getOcsClient();
+		$this->apps = \OC_App::listAllApps(false, false, $this->ocsClient);
+		$this->appConfig = $appConfig; //\OC::$server->getAppConfig();
+	}
+
 
 	/**
 	 * @param int $options
@@ -53,9 +161,9 @@ class ReportDataCollector {
 	 */
 	private function getIntegrityCheckerDetailArray() {
 		return [
-			'passing' => \OC::$server->getIntegrityCodeChecker()->hasPassedCheck(),
-			'enabled' => \OC::$server->getIntegrityCodeChecker()->isCodeCheckEnforced(),
-			'result' => \OC::$server->getIntegrityCodeChecker()->getResults(),
+			'passing' => $this->integrityChecker->hasPassedCheck(),
+			'enabled' => $this->integrityChecker->isCodeCheckEnforced(),
+			'result' => $this->integrityChecker->getResults(),
 		];
 	}
 
@@ -66,28 +174,27 @@ class ReportDataCollector {
 		// Basic report data
 		// TODO $homecount should be determined by \OC::$server->getUserManager()->search()
 		// and then checking the lastLoginTime of each user object, leaving current impl intact
-		$userids = \OC_User::getUsers();
-		$homecount = 0;
-		foreach($userids as $uid) {
-			if(\OC::$server->getUserManager()->get($uid)) {
-				$homecount++;
+		$homeCount = 0;
+		foreach($this->users as $uid) {
+			if($this->userManager->get($uid)) {
+				$homeCount++;
 			}
 		}
 
 		return [
-			'license key' => \OC::$server->getConfig()->getSystemValue('license-key'),
+			'license key' => $this->licenseKey,
 			'date' => date('r'),
-			'ownCloud version' => implode('.', \OC_Util::getVersion()),
-			'ownCloud version string' => \OC_Util::getVersionString(),
-			'ownCloud edition' => \OC_Util::getEditionString(),
+			'ownCloud version' => implode('.', $this->version),
+			'ownCloud version string' => $this->versionString,
+			'ownCloud edition' => $this->editionString,
 			'server OS' => PHP_OS,
 			'server OS version' => php_uname(),
 			'server SAPI' => php_sapi_name(),
 			'webserver version' => $_SERVER['SERVER_SOFTWARE'],
 			'hostname' => $_SERVER['HTTP_HOST'],
-			'user count' => count($userids),
-			'user directories' => $homecount,
-			'logged-in user' => \OCP\User::getDisplayName(),
+			'user count' => count($this->users),
+			'user directories' => $homeCount,
+			'logged-in user' => $this->displayName,
 		];
 	}
 
@@ -95,12 +202,10 @@ class ReportDataCollector {
 	 * @return array
 	 */
 	private function getSystemConfigDetailArray() {
-		// Get the OC config and filter out the sensitive bits
-		$systemConfig = \OC::$server->getSystemConfig();
-		$keys = $systemConfig->getKeys();
+		$keys = $this->systemConfig->getKeys();
 		$result = array();
 		foreach ($keys as $key) {
-			$result[$key] = $systemConfig->getFilteredValue($key);
+			$result[$key] = $this->systemConfig->getFilteredValue($key);
 		}
 
 		return $result;
@@ -111,10 +216,10 @@ class ReportDataCollector {
 	 */
 	private function getAppsDetailArray() {
 		// Get app data
-		$apps = \OC_App::listAllApps(false, false, \OC::$server->getOcsClient());
-		foreach($apps as &$app) {
+		foreach($this->apps as &$app) {
 			if($app['active']) {
-				$appConfig = \OC::$server->getAppConfig()->getValues($app['id'], false);
+
+				$appConfig = $this->appConfig->getValues($app['id'], false);
 				foreach($appConfig as $key => $value) {
 					if (stripos($key, 'password') !== FALSE) {
 						$appConfig[$key] = \OCP\IConfig::SENSITIVE_VALUE;
@@ -123,7 +228,7 @@ class ReportDataCollector {
 				$app['appconfig'] = $appConfig;
 			}
 		}
-		return $apps;
+		return $this->apps;
 	}
 
 	/**
