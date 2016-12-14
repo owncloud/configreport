@@ -21,7 +21,7 @@
 namespace OCA\ConfigReport\Controller;
 
 use OCA\ConfigReport\Http\ReportResponse;
-use OCA\ConfigReport\Report\ReportDataCollector;
+use OCA\ConfigReport\ReportDataCollector;
 use OCP\AppFramework\Controller;
 use OCP\IConfig;
 use OCP\IRequest;
