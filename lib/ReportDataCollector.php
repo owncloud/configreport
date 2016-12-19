@@ -114,20 +114,20 @@ class ReportDataCollector {
 		OCSClient $ocsClient,
 		IAppConfig $appConfig
 	) {
-		$this->integrityChecker = $integrityChecker; //\OC::$server->getIntegrityCodeChecker()
-		$this->users = $users; //\OC_User::getUsers()
-		$this->userManager = $userManager; //\OC::$server->getUserManager();
-		$this->licenseKey = $licenseKey; //\OC::$server->getConfig()->getSystemValue('license-key');
+		$this->integrityChecker = $integrityChecker;
+		$this->users = $users;
+		$this->userManager = $userManager;
+		$this->licenseKey = $licenseKey;
 
-		$this->version = $version; //\OC_Util::getVersion()
-		$this->versionString = $versionString; //\OC_Util::getVersionString()
-		$this->editionString = $editionString; //\OC_Util::getEditionString()
-		$this->displayName = $displayName; //\OCP\User::getDisplayName()
+		$this->version = $version;
+		$this->versionString = $versionString;
+		$this->editionString = $editionString;
+		$this->displayName = $displayName;
 
-		$this->systemConfig = $systemConfig; //\OC::$server->getSystemConfig();
-		$this->ocsClient = $ocsClient; //\OC::$server->getOcsClient();
+		$this->systemConfig = $systemConfig;
+		$this->ocsClient = $ocsClient;
 		$this->apps = \OC_App::listAllApps(false, false, $this->ocsClient);
-		$this->appConfig = $appConfig; //\OC::$server->getAppConfig();
+		$this->appConfig = $appConfig;
 	}
 
 
