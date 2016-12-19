@@ -35,11 +35,20 @@ class ConfigReport extends Command {
 	 */
 	private $reportDataCollector;
 
-	/**
-	 * @param ReportDataCollector|null $reportDataCollector
-	 */
-	public function __construct(ReportDataCollector $reportDataCollector) {
-		$this->reportDataCollector = $reportDataCollector;
+	public function __construct() {
+		$this->reportDataCollector = new ReportDataCollector(
+			\OC::$server->getIntegrityCodeChecker(),
+			\OC_User::getUsers(),
+			\OC::$server->getUserManager(),
+			\OC::$server->getConfig()->getSystemValue('license-key'),
+			\OC_Util::getVersion(),
+			\OC_Util::getVersionString(),
+			\OC_Util::getEditionString(),
+			\OCP\User::getDisplayName(),
+			\OC::$server->getSystemConfig(),
+			\OC::$server->getOcsClient(),
+			\OC::$server->getAppConfig()
+		);
 		parent::__construct();
 	}
 
