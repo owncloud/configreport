@@ -21,7 +21,7 @@
 namespace OCA\ConfigReport\Controller;
 
 use OCA\ConfigReport\Http\ReportResponse;
-use OCA\ConfigReport\Report\ReportDataCollector;
+use OCA\ConfigReport\ReportDataCollector;
 use OCP\AppFramework\Controller;
 use OCP\IConfig;
 use OCP\IRequest;
@@ -39,14 +39,26 @@ class ReportController extends Controller {
      */
     private $config;
 
+	/**
+	 * @var ReportDataCollector
+	 */
+	private $reportDataCollector;
+
     /**
      * @param string $AppName
      * @param IRequest $request
      * @param IConfig $config
+	 * @param ReportDataCollector $reportDataCollector
      */
-    public function __construct($AppName, IRequest $request, IConfig $config) {
-        parent::__construct($AppName, $request);
-        $this->config = $config;
+    public function __construct(
+    	$AppName,
+		IRequest $request,
+		IConfig $config,
+		ReportDataCollector $reportDataCollector
+	) {
+		$this->config = $config;
+		$this->reportDataCollector = $reportDataCollector;
+		parent::__construct($AppName, $request);
     }
 
     /**
@@ -56,8 +68,6 @@ class ReportController extends Controller {
      * @return ReportResponse with the report
      */
     public function getReport() {
-        $reportDataCollector = new ReportDataCollector();
-
-        return new ReportResponse('', '', $reportDataCollector->getReportJson());
+        return new ReportResponse('', '', $this->reportDataCollector->getReportJson());
     }
 }
