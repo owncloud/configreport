@@ -18,7 +18,6 @@
 
 namespace OCA\ConfigReport;
 use OC\IntegrityCheck\Checker;
-use OC\OCSClient;
 use OC\SystemConfig;
 use OC\User\Manager;
 use OCP\IAppConfig;
@@ -74,11 +73,6 @@ class ReportDataCollector {
 	private $systemConfig;
 
 	/**
-	 * @var OCSClient
-	 */
-	private $ocsClient;
-
-	/**
 	 * @var array
 	 */
 	private $apps;
@@ -98,7 +92,6 @@ class ReportDataCollector {
 	 * @param string $editionString
 	 * @param string $displayName
 	 * @param SystemConfig $systemConfig
-	 * @param OCSClient $ocsClient
 	 * @param IAppConfig $appConfig
 	 */
 	public function __construct(
@@ -111,7 +104,6 @@ class ReportDataCollector {
 		$editionString,
 		$displayName,
 		SystemConfig $systemConfig,
-		OCSClient $ocsClient,
 		IAppConfig $appConfig
 	) {
 		$this->integrityChecker = $integrityChecker;
@@ -125,8 +117,7 @@ class ReportDataCollector {
 		$this->displayName = $displayName;
 
 		$this->systemConfig = $systemConfig;
-		$this->ocsClient = $ocsClient;
-		$this->apps = \OC_App::listAllApps(false, false, $this->ocsClient);
+		$this->apps = \OC_App::listAllApps();
 		$this->appConfig = $appConfig;
 	}
 
