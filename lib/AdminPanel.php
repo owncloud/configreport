@@ -1,9 +1,9 @@
 <?php
+
 /**
- * @author Felix Boehm <felix@owncloud.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
+ * @author Tom Needham <tom@owncloud.com>
  *
- * @copyright Copyright (c) 2016, ownCloud GmbH.
+ * @copyright Copyright (c) 2017, ownCloud, GbmH.
  * @license AGPL-3.0
  *
  * This code is free software: you can redistribute it and/or modify
@@ -17,6 +17,36 @@
  *
  * You should have received a copy of the GNU Affero General Public License, version 3,
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 
-OCP\App::registerAdmin('configreport', 'settings/admin');
+namespace OCA\ConfigReport;
+
+use OCP\IURLGenerator;
+use OCP\Settings\ISettings;
+use OCP\Template;
+
+class AdminPanel implements ISettings
+{
+
+	protected $urlGenerator;
+
+	public function __construct(IURLGenerator $urlGenerator) {
+		$this->urlGenerator = $urlGenerator;
+	}
+
+	public function getPanel() {
+		$tmpl = new Template('configreport', 'settings/admin');
+		$tmpl->assign('urlGenerator', $this->urlGenerator);
+		return $tmpl;
+	}
+
+	public function getPriority() {
+		return 10;
+	}
+
+	public function getSectionID() {
+		return 'monitoring';
+	}
+
+}
