@@ -140,9 +140,9 @@ class ReportDataCollector {
 
 		return [
 			'basic' => $this->getBasicDetailArray(),
+			'config' => $this->getSystemConfigDetailArray(),
 			'integritychecker' => $this->getIntegrityCheckerDetailArray(),
 			'apps' => $this->getAppsDetailArray(),
-			'config' => $this->getSystemConfigDetailArray(),
 			'phpinfo' => $this->getPhpInfoDetailArray()
 		];
 	}
