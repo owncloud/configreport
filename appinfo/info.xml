@@ -19,4 +19,7 @@
 	<commands>
 		<command>OCA\ConfigReport\Command\ConfigReport</command>
 	</commands>
+	<settings>
+		<admin>OCA\ConfigReport\AdminPanel</admin>
+	</settings>
 </info>
