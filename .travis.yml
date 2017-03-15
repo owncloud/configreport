@@ -8,7 +8,7 @@ env:
     - CORE_BRANCH=master
     - APP_NAME=configreport
   matrix:
-    - DB=SQLLITE
+    - DB=sqlite
  
 branches:
   only:
@@ -25,7 +25,7 @@ before_install:
   - ./occ check
   - ./occ status
   - ./occ app:list
-  - ./occ app:ENABLE $APP_NAME
+  - ./occ app:enable $APP_NAME
  
 matrix:
   include:
