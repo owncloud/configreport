@@ -51,7 +51,6 @@ class ConfigReport extends Command {
 			\OC_Util::getEditionString(),
 			\OCP\User::getDisplayName(),
 			\OC::$server->getSystemConfig(),
-			\OC::$server->getOcsClient(),
 			\OC::$server->getAppConfig()
 		);
 
