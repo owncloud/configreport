@@ -21,6 +21,8 @@ use OC\IntegrityCheck\Checker;
 use OC\OCSClient;
 use OC\SystemConfig;
 use OC\User\Manager;
+use OCP\Files\External\IStorageConfig;
+use OCP\Files\External\Service\IGlobalStoragesService;
 use OCP\IAppConfig;
 
 /**
@@ -89,6 +91,11 @@ class ReportDataCollector {
 	private $appConfig;
 
 	/**
+	 * @var IGlobalStoragesService
+	 */
+	private $globalService;
+
+	/**
 	 * @param Checker $integrityChecker
 	 * @param array $users
 	 * @param Manager $userManager
@@ -100,6 +107,7 @@ class ReportDataCollector {
 	 * @param SystemConfig $systemConfig
 	 * @param OCSClient $ocsClient
 	 * @param IAppConfig $appConfig
+	 * @param IGlobalStoragesService $globalService
 	 */
 	public function __construct(
 		Checker $integrityChecker,
@@ -112,7 +120,8 @@ class ReportDataCollector {
 		$displayName,
 		SystemConfig $systemConfig,
 		OCSClient $ocsClient,
-		IAppConfig $appConfig
+		IAppConfig $appConfig,
+		IGlobalStoragesService $globalService
 	) {
 		$this->integrityChecker = $integrityChecker;
 		$this->users = $users;
@@ -128,6 +137,7 @@ class ReportDataCollector {
 		$this->ocsClient = $ocsClient;
 		$this->apps = \OC_App::listAllApps(false, false, $this->ocsClient);
 		$this->appConfig = $appConfig;
+		$this->globalService = $globalService;
 	}
 
 
@@ -152,9 +162,44 @@ class ReportDataCollector {
 			'integritychecker' => $this->getIntegrityCheckerDetailArray(),
 			'apps' => $this->getAppsDetailArray(),
 			'config' => $this->getSystemConfigDetailArray(),
+            'mounts' => $this->getMountsArray(),
 			'phpinfo' => $this->getPhpInfoDetailArray()
 		];
 	}
+
+    /**
+     * @return array
+     */
+	private function getMountsArray() {
+	    /** @var IStorageConfig[] $mounts */
+        $mounts = $this->globalService->getStorageForAllUsers();
+
+        $mountsArray = [];
+
+        foreach ($mounts as $mount) {
+
+            $applicableUsers = implode(', ', $mount->getApplicableUsers());
+            $applicableGroups = implode(', ', $mount->getApplicableGroups());
+
+            if ($applicableUsers === '' && $applicableGroups === '') {
+                $applicableUsers = 'All';
+            }
+
+            $mountsArray[] = [
+                'id' => $mount->getId(),
+                'mount_point' => $mount->getMountPoint(),
+                'storage' => $mount->getBackend()->getText(),
+                'authentication_type' => $mount->getAuthMechanism()->getText(),
+                'configuration' => $mount->getBackendOptions(),
+                'options' => $mount->getMountOptions(),
+                'applicable_users' => $applicableUsers,
+                'applicable_groups' => $applicableGroups,
+                'type' => $mount->getType() === IStorageConfig::MOUNT_TYPE_ADMIN ? 'Admin' : 'Personal'
+            ];
+        }
+
+        return $mountsArray;
+    }
 
 	/**
 	 * @return array

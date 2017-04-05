@@ -40,7 +40,8 @@ class Application extends App {
 				\OCP\User::getDisplayName(),
 				\OC::$server->getSystemConfig(),
 				\OC::$server->getOcsClient(),
-				\OC::$server->getAppConfig()
+				\OC::$server->getAppConfig(),
+                \OC::$server->getGlobalStoragesService()
 			);
 		});
 
