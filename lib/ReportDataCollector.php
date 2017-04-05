@@ -17,12 +17,12 @@
  */
 
 namespace OCA\ConfigReport;
+use OC\Files\External\Service\GlobalStoragesService;
 use OC\IntegrityCheck\Checker;
 use OC\OCSClient;
 use OC\SystemConfig;
 use OC\User\Manager;
 use OCP\Files\External\IStorageConfig;
-use OCP\Files\External\Service\IGlobalStoragesService;
 use OCP\IAppConfig;
 
 /**
@@ -91,7 +91,7 @@ class ReportDataCollector {
 	private $appConfig;
 
 	/**
-	 * @var IGlobalStoragesService
+	 * @var GlobalStoragesService
 	 */
 	private $globalService;
 
@@ -107,7 +107,7 @@ class ReportDataCollector {
 	 * @param SystemConfig $systemConfig
 	 * @param OCSClient $ocsClient
 	 * @param IAppConfig $appConfig
-	 * @param IGlobalStoragesService $globalService
+	 * @param GlobalStoragesService $globalService
 	 */
 	public function __construct(
 		Checker $integrityChecker,
@@ -121,7 +121,7 @@ class ReportDataCollector {
 		SystemConfig $systemConfig,
 		OCSClient $ocsClient,
 		IAppConfig $appConfig,
-		IGlobalStoragesService $globalService
+		GlobalStoragesService $globalService
 	) {
 		$this->integrityChecker = $integrityChecker;
 		$this->users = $users;
