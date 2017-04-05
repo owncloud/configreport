@@ -17,7 +17,7 @@
  */
 
 namespace OCA\ConfigReport;
-use OC\Files\External\Service\GlobalStoragesService;
+use OCA\Files_External\Service\GlobalStoragesService;
 use OC\IntegrityCheck\Checker;
 use OC\OCSClient;
 use OC\SystemConfig;
