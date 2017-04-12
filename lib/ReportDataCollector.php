@@ -142,6 +142,7 @@ class ReportDataCollector {
 			'basic' => $this->getBasicDetailArray(),
 			'config' => $this->getSystemConfigDetailArray(),
 			'integritychecker' => $this->getIntegrityCheckerDetailArray(),
+			'core' => $this->getCoreConfigArray(),
 			'apps' => $this->getAppsDetailArray(),
 			'phpinfo' => $this->getPhpInfoDetailArray()
 		];
@@ -203,6 +204,32 @@ class ReportDataCollector {
 	}
 
 	/**
+	 * Sanitize values from the given hash array by removing
+	 * sensitive values
+	 *
+	 * @param array $values hash array
+	 * @return array sanitized array
+	 */
+	private function sanitizeValues($values) {
+		foreach($values as $key => $value) {
+			if (stripos($key, 'password') !== FALSE) {
+				$values[$key] = \OCP\IConfig::SENSITIVE_VALUE;
+			}
+		}
+		return $values;
+	}
+
+	/**
+	 * @return array
+	 */
+	private function getCoreConfigArray() {
+		// Get core config data
+		$appConfig = $this->appConfig->getValues('core', false);
+		// this one is reported separately already
+		unset($appConfig['oc.integritycheck.checker']);
+		return $this->sanitizeValues($appConfig);
+	}
+	/**
 	 * @return array
 	 */
 	private function getAppsDetailArray() {
@@ -211,12 +238,7 @@ class ReportDataCollector {
 			if($app['active']) {
 
 				$appConfig = $this->appConfig->getValues($app['id'], false);
-				foreach($appConfig as $key => $value) {
-					if (stripos($key, 'password') !== FALSE) {
-						$appConfig[$key] = \OCP\IConfig::SENSITIVE_VALUE;
-					}
-				}
-				$app['appconfig'] = $appConfig;
+				$app['appconfig'] = $this->sanitizeValues($appConfig);
 			}
 		}
 		return $this->apps;
