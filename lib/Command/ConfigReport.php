@@ -45,7 +45,6 @@ class ConfigReport extends Command {
 			\OC::$server->getIntegrityCodeChecker(),
 			\OC_User::getUsers(),
 			\OC::$server->getUserManager(),
-			\OC::$server->getConfig()->getSystemValue('license-key'),
 			\OC_Util::getVersion(),
 			\OC_Util::getVersionString(),
 			\OC_Util::getEditionString(),

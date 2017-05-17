@@ -86,7 +86,6 @@ class ReportDataCollector {
 	 * @param Checker $integrityChecker
 	 * @param array $users
 	 * @param Manager $userManager
-	 * @param string $licenseKey
 	 * @param array $version
 	 * @param string $versionString
 	 * @param string $editionString
@@ -98,7 +97,6 @@ class ReportDataCollector {
 		Checker $integrityChecker,
 		array $users,
 		Manager $userManager,
-		$licenseKey,
 		array $version,
 		$versionString,
 		$editionString,
@@ -109,7 +107,7 @@ class ReportDataCollector {
 		$this->integrityChecker = $integrityChecker;
 		$this->users = $users;
 		$this->userManager = $userManager;
-		$this->licenseKey = $licenseKey;
+		$this->licenseKey = \OCP\IConfig::SENSITIVE_VALUE;
 
 		$this->version = $version;
 		$this->versionString = $versionString;
