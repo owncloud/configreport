@@ -21,6 +21,7 @@ use OC\IntegrityCheck\Checker;
 use OC\SystemConfig;
 use OC\User\Manager;
 use OCP\IAppConfig;
+use OCA\ConfigReport\ConfigReportEvent;
 
 /**
  * @package OCA\ConfigReport\Report
@@ -75,6 +76,11 @@ class ReportDataCollector {
 	/**
 	 * @var array
 	 */
+	private $appConfigData;
+
+	/**
+	 * @var array
+	 */
 	private $apps;
 
 	/**
@@ -117,6 +123,9 @@ class ReportDataCollector {
 		$this->systemConfig = $systemConfig;
 		$this->apps = \OC_App::listAllApps();
 		$this->appConfig = $appConfig;
+
+		$event = new ConfigReportEvent();
+		$this->appConfigData = \OC::$server->getEventDispatcher()->dispatch('OCA\ConfigReport::loadData', $event)->getConfigReportData();
 	}
 
 
@@ -130,13 +139,26 @@ class ReportDataCollector {
 	}
 
 	/**
+	 * @param array $report
+	 */
+	public function addEventListenerReportData(&$report) {
+		foreach ($this->appConfigData as $index) {
+			foreach ($index as $innerKey => $innerVal) {
+				if (!array_key_exists($innerKey, $report)) {
+					$report[$innerKey] = $innerVal;
+				}
+			}
+		}
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getReport() {
 		// TODO: add l10n (unused right now)
 		$l = \OC::$server->getL10N('config_report');
 
-		return [
+		$report = [
 			'basic' => $this->getBasicDetailArray(),
 			'config' => $this->getSystemConfigDetailArray(),
 			'integritychecker' => $this->getIntegrityCheckerDetailArray(),
@@ -144,6 +166,11 @@ class ReportDataCollector {
 			'apps' => $this->getAppsDetailArray(),
 			'phpinfo' => $this->getPhpInfoDetailArray()
 		];
+
+		//Now apps can add their values to report array
+		$this->addEventListenerReportData($report);
+
+		return $report;
 	}
 
 	/**
