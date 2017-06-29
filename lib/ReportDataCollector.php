@@ -21,7 +21,7 @@ use OC\IntegrityCheck\Checker;
 use OC\SystemConfig;
 use OC\User\Manager;
 use OCP\IAppConfig;
-use OCA\ConfigReport\ConfigReportEvent;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * @package OCA\ConfigReport\Report
@@ -124,8 +124,8 @@ class ReportDataCollector {
 		$this->apps = \OC_App::listAllApps();
 		$this->appConfig = $appConfig;
 
-		$event = new ConfigReportEvent();
-		$this->appConfigData = \OC::$server->getEventDispatcher()->dispatch('OCA\ConfigReport::loadData', $event)->getConfigReportData();
+		$event = new GenericEvent();
+		$this->appConfigData = \OC::$server->getEventDispatcher()->dispatch('OCA\ConfigReport::loadData', $event);
 	}
 
 
@@ -142,7 +142,7 @@ class ReportDataCollector {
 	 * @param array $report
 	 */
 	public function addEventListenerReportData(&$report) {
-		foreach ($this->appConfigData as $index) {
+		foreach ($this->appConfigData->getArguments() as $index) {
 			foreach ($index as $innerKey => $innerVal) {
 				if (!array_key_exists($innerKey, $report)) {
 					$report[$innerKey] = $innerVal;
