@@ -47,7 +47,7 @@ class AdminPanel implements ISettings
 	}
 
 	public function getSectionID() {
-		return 'help';
+		return 'general';
 	}
 
 }
