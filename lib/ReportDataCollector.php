@@ -247,7 +247,11 @@ class ReportDataCollector {
 		$keys = $this->systemConfig->getKeys();
 		$result = array();
 		foreach ($keys as $key) {
-			$result[$key] = $this->systemConfig->getFilteredValue($key);
+			if ($key === "marketplace.key") {
+				$result[$key] = \OCP\IConfig::SENSITIVE_VALUE;
+			} else {
+				$result[$key] = $this->systemConfig->getFilteredValue($key);
+			}
 		}
 
 		return $result;
