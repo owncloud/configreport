@@ -41,6 +41,15 @@ pipeline:
       matrix:
         COVERAGE: true
 
+  notify:
+    image: plugins/slack:1
+    pull: true
+    secrets: [ slack_webhook ]
+    channel: builds
+    when:
+      status: [ failure, changed ]
+      event: [ push, tag ]
+
 matrix:
   include:
 
