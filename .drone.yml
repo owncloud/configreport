@@ -9,6 +9,7 @@ pipeline:
     image: owncloudci/core
     pull: true
     version: ${OC_VERSION}
+    exclude: apps/configreport
 
   code-compliance-check:
     image: owncloudci/php:${PHP_VERSION}
