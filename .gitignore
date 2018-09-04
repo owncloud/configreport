@@ -1,2 +1,6 @@
 .idea/
 tests/output
+vendor/
+vendor-bin/**/vendor
+vendor-bin/**/composer.lock
+.php_cs.cache
