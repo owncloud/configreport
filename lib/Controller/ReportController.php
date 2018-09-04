@@ -34,24 +34,24 @@ use OCP\IRequest;
  */
 class ReportController extends Controller {
 
-    /**
-     * @var IConfig
-     */
-    private $config;
+	/**
+	 * @var IConfig
+	 */
+	private $config;
 
 	/**
 	 * @var ReportDataCollector
 	 */
 	private $reportDataCollector;
 
-    /**
-     * @param string $AppName
-     * @param IRequest $request
-     * @param IConfig $config
+	/**
+	 * @param string $AppName
+	 * @param IRequest $request
+	 * @param IConfig $config
 	 * @param ReportDataCollector $reportDataCollector
-     */
-    public function __construct(
-    	$AppName,
+	 */
+	public function __construct(
+		$AppName,
 		IRequest $request,
 		IConfig $config,
 		ReportDataCollector $reportDataCollector
@@ -59,15 +59,15 @@ class ReportController extends Controller {
 		$this->config = $config;
 		$this->reportDataCollector = $reportDataCollector;
 		parent::__construct($AppName, $request);
-    }
+	}
 
-    /**
-     * AJAX handler for getting the config report
-     *
+	/**
+	 * AJAX handler for getting the config report
+	 *
 	 * @NoCSRFRequired
-     * @return ReportResponse with the report
-     */
-    public function getReport() {
-        return new ReportResponse('', '', $this->reportDataCollector->getReportJson());
-    }
+	 * @return ReportResponse with the report
+	 */
+	public function getReport() {
+		return new ReportResponse('', '', $this->reportDataCollector->getReportJson());
+	}
 }
