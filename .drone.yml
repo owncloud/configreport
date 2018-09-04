@@ -25,7 +25,8 @@ pipeline:
     environment:
       - COVERAGE=${COVERAGE}
     commands:
-      - make test-php-unit
+      - if [ -z "${COVERAGE}" ]; then make test-php-unit; fi
+      - if [ "${COVERAGE}" = "true" ]; then make test-php-unit-dbg; fi
 
   codecov:
     image: plugins/codecov:2
