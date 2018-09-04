@@ -21,6 +21,7 @@ use OC\IntegrityCheck\Checker;
 use OC\SystemConfig;
 use OC\User\Manager;
 use OCP\IAppConfig;
+use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUser;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -90,6 +91,9 @@ class ReportDataCollector {
 	 */
 	private $appConfig;
 
+	/** @var IDBConnection */
+	private $connection;
+
 	/**
 	 * @param Checker $integrityChecker
 	 * @param Manager $userManager
@@ -100,6 +104,7 @@ class ReportDataCollector {
 	 * @param string $displayName
 	 * @param SystemConfig $systemConfig
 	 * @param IAppConfig $appConfig
+	 * @param IDBConnection $connection
 	 */
 	public function __construct(
 		Checker $integrityChecker,
@@ -110,7 +115,8 @@ class ReportDataCollector {
 		$editionString,
 		$displayName,
 		SystemConfig $systemConfig,
-		IAppConfig $appConfig
+		IAppConfig $appConfig,
+		IDBConnection $connection
 	) {
 		$this->integrityChecker = $integrityChecker;
 		$this->userManager = $userManager;
@@ -125,6 +131,7 @@ class ReportDataCollector {
 		$this->systemConfig = $systemConfig;
 		$this->apps = \OC_App::listAllApps();
 		$this->appConfig = $appConfig;
+		$this->connection = $connection;
 
 		$event = new GenericEvent();
 		$this->appConfigData = \OC::$server->getEventDispatcher()->dispatch('OCA\ConfigReport::loadData', $event);
@@ -166,6 +173,7 @@ class ReportDataCollector {
 			'integritychecker' => $this->getIntegrityCheckerDetailArray(),
 			'core' => $this->getCoreConfigArray(),
 			'apps' => $this->getAppsDetailArray(),
+			'migrations' => $this->getOcMigrationArray(),
 			'phpinfo' => $this->getPhpInfoDetailArray()
 		];
 
@@ -290,6 +298,21 @@ class ReportDataCollector {
 			}
 		}
 		return $this->apps;
+	}
+
+	/**
+	 * @return array
+	 */
+	private function getOcMigrationArray() {
+		//Get data from oc_migrations table
+		$queryBuilder = $this->connection->getQueryBuilder();
+		$results = $queryBuilder
+			->select('app', 'version')
+			->from('migrations')
+			->execute()
+			->fetchAll();
+
+		return $results;
 	}
 
 	/**
