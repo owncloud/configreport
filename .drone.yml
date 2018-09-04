@@ -18,6 +18,7 @@ pipeline:
       # currently fails since we rely on OC_Util
       # - make test-php-codecheck
       - make test-php-lint
+      - make test-php-style
 
   unit-tests:
     image: owncloudci/php:${PHP_VERSION}
