@@ -27,7 +27,6 @@ use OCP\IConfig;
 use OCP\IRequest;
 use Test\TestCase;
 
-
 /**
  * Class ReportControllerTest
  *
@@ -41,9 +40,8 @@ class ReportControllerTest extends TestCase {
 	private $request;
 	/** @var ReportController */
 	private $controller;
-    /** @var ReportDataCollector */
+	/** @var ReportDataCollector */
 	private $reportDataCollector;
-
 
 	protected function setUp() {
 		parent::setUp();
@@ -67,10 +65,9 @@ class ReportControllerTest extends TestCase {
 	}
 
 	public function testGetReport() {
-		$expectedValue = json_encode([]);
+		$expectedValue = \json_encode([]);
 		$this->reportDataCollector->method('getReportJson')->willReturn($expectedValue);
 		$result = $this->controller->getReport();
 		$this->assertInstanceOf(ReportResponse::class, $result);
 	}
 }
-
