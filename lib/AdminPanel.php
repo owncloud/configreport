@@ -26,8 +26,7 @@ use OCP\IURLGenerator;
 use OCP\Settings\ISettings;
 use OCP\Template;
 
-class AdminPanel implements ISettings
-{
+class AdminPanel implements ISettings {
 
 	/** @var IURLGenerator  */
 	protected $urlGenerator;
@@ -49,5 +48,4 @@ class AdminPanel implements ISettings
 	public function getSectionID() {
 		return 'general';
 	}
-
 }

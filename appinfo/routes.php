@@ -22,17 +22,18 @@
 namespace OCA\ConfigReport\AppInfo;
 
 use OCP\AppFramework\App;
+
 $application = new Application('configreport');
 
 $application->registerRoutes(
-    $this,
-    [
-        'routes' => [
-            [
-                'name' => 'Report#getReport',
-                'url' => '/report',
-                'verb' => 'GET',
-            ],
-        ],
-    ]
+	$this,
+	[
+		'routes' => [
+			[
+				'name' => 'Report#getReport',
+				'url' => '/report',
+				'verb' => 'GET',
+			],
+		],
+	]
 );

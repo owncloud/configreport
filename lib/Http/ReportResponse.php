@@ -27,10 +27,10 @@ use OCP\AppFramework\Http\DownloadResponse;
  */
 class ReportResponse extends DownloadResponse {
 
-    /**
-     * @var array $data
-     */
-    private $data;
+	/**
+	 * @var array $data
+	 */
+	private $data;
 
 	/**
 	 * ReportResponse constructor.
@@ -39,19 +39,19 @@ class ReportResponse extends DownloadResponse {
 	 * @param string $contentType
 	 * @param string $data
 	 */
-    public function __construct($fileName, $contentType, $data) {
+	public function __construct($fileName, $contentType, $data) {
 		$this->data = $data;
 
-		$fileName = $fileName ? $fileName : 'config_report_' . date('Ymd') . '.json';
+		$fileName = $fileName ? $fileName : 'config_report_' . \date('Ymd') . '.json';
 		$contentType = $contentType ? $contentType : 'text/json';
 
 		parent::__construct($fileName, $contentType);
-    }
+	}
 
 	/**
 	 * @return string
 	 */
-    public function render() {
-        return $this->data;
-    }
+	public function render() {
+		return $this->data;
+	}
 }
