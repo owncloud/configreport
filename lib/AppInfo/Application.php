@@ -38,7 +38,8 @@ class Application extends App {
 				\OC_Util::getEditionString(),
 				\OCP\User::getDisplayName(),
 				\OC::$server->getSystemConfig(),
-				\OC::$server->getAppConfig()
+				\OC::$server->getAppConfig(),
+				\OC::$server->getDatabaseConnection()
 			);
 		});
 
