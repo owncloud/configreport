@@ -20,7 +20,7 @@ class Application extends App {
 	 * @param string $appName
 	 * @param array $urlParams
 	 */
-	public function __construct($appName, array $urlParams = array()){
+	public function __construct($appName, array $urlParams = []) {
 		parent::__construct('configreport', $urlParams);
 		$this->registerServices();
 	}
@@ -28,11 +28,11 @@ class Application extends App {
 	private function registerServices() {
 		$container = $this->getContainer();
 
-		$container->registerService('ReportDataCollector', function($c){
+		$container->registerService('ReportDataCollector', function ($c) {
 			return new ReportDataCollector(
 				\OC::$server->getIntegrityCodeChecker(),
-				\OC_User::getUsers(),
 				\OC::$server->getUserManager(),
+				\OC::$server->getGroupManager(),
 				\OC_Util::getVersion(),
 				\OC_Util::getVersionString(),
 				\OC_Util::getEditionString(),
@@ -42,7 +42,7 @@ class Application extends App {
 			);
 		});
 
-		$container->registerService('ReportController', function(IAppContainer $c){
+		$container->registerService('ReportController', function (IAppContainer $c) {
 			$server = $c->getServer();
 			return new ReportController(
 				$c->query('AppName'),
