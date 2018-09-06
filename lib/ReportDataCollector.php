@@ -21,6 +21,8 @@ use OC\IntegrityCheck\Checker;
 use OC\SystemConfig;
 use OC\User\Manager;
 use OCP\IAppConfig;
+use OCP\IGroupManager;
+use OCP\IUser;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -34,14 +36,14 @@ class ReportDataCollector {
 	private $integrityChecker;
 
 	/**
-	 * @var array
-	 */
-	private $users;
-
-	/**
 	 * @var Manager
 	 */
 	private $userManager;
+
+	/**
+	 * @var IGroupManager
+	 */
+	private $groupManager;
 
 	/**
 	 * @var string
@@ -90,8 +92,8 @@ class ReportDataCollector {
 
 	/**
 	 * @param Checker $integrityChecker
-	 * @param array $users
 	 * @param Manager $userManager
+	 * @param IGroupManager $groupManager
 	 * @param array $version
 	 * @param string $versionString
 	 * @param string $editionString
@@ -101,8 +103,8 @@ class ReportDataCollector {
 	 */
 	public function __construct(
 		Checker $integrityChecker,
-		array $users,
 		Manager $userManager,
+		IGroupManager $groupManager,
 		array $version,
 		$versionString,
 		$editionString,
@@ -111,8 +113,8 @@ class ReportDataCollector {
 		IAppConfig $appConfig
 	) {
 		$this->integrityChecker = $integrityChecker;
-		$this->users = $users;
 		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
 		$this->licenseKey = \OCP\IConfig::SENSITIVE_VALUE;
 
 		$this->version = $version;
@@ -159,6 +161,7 @@ class ReportDataCollector {
 
 		$report = [
 			'basic' => $this->getBasicDetailArray(),
+			'stats' => $this->getStatsDetailArray(),
 			'config' => $this->getSystemConfigDetailArray(),
 			'integritychecker' => $this->getIntegrityCheckerDetailArray(),
 			'core' => $this->getCoreConfigArray(),
@@ -184,19 +187,10 @@ class ReportDataCollector {
 	}
 
 	/**
+	 * Basic report data
 	 * @return array
 	 */
 	private function getBasicDetailArray() {
-		// Basic report data
-		// TODO $homecount should be determined by \OC::$server->getUserManager()->search()
-		// and then checking the lastLoginTime of each user object, leaving current impl intact
-		$homeCount = 0;
-		foreach ($this->users as $uid) {
-			if ($this->userManager->get($uid)) {
-				$homeCount++;
-			}
-		}
-
 		return [
 			'license key' => $this->licenseKey,
 			'date' => \date('r'),
@@ -208,8 +202,6 @@ class ReportDataCollector {
 			'server SAPI' => \php_sapi_name(),
 			'webserver version' => $_SERVER['SERVER_SOFTWARE'],
 			'hostname' => $_SERVER['HTTP_HOST'],
-			'user count' => \count($this->users),
-			'user directories' => $homeCount,
 			'logged-in user' => $this->displayName,
 		];
 	}
@@ -217,6 +209,39 @@ class ReportDataCollector {
 	/**
 	 * @return array
 	 */
+	private function getStatsDetailArray() {
+		$users = [];
+		$this->userManager->callForAllUsers(function (IUser $user) use (&$users) {
+			if (!isset($users[$user->getBackendClassName()])) {
+				$users[$user->getBackendClassName()] = ['count' => 0, 'seen' => 0, 'logged in (30 days)' => 0];
+			}
+			$users[$user->getBackendClassName()]['count']++;
+			if ($user->getLastLogin() > 0) {
+				$users[$user->getBackendClassName()]['seen']++;
+				if ($user->getLastLogin() > \strtotime('-30 days')) {
+					$users[$user->getBackendClassName()]['logged in (30 days)']++;
+				}
+			}
+		});
+
+		$groupCount = [];
+		$groups = $this->groupManager->search('');
+		foreach ($groups as $group) {
+			$backendName = \get_class($group->getBackend());
+			if (!isset($groupCount[$backendName])) {
+				$groupCount[$backendName] = 0;
+			}
+			$groupCount[$backendName]++;
+		}
+
+		return [
+			'users' => $users,
+			'groups' => $groupCount,
+		];
+	}
+	/**
+	* @return array
+	*/
 	private function getSystemConfigDetailArray() {
 		$keys = $this->systemConfig->getKeys();
 		$result = [];

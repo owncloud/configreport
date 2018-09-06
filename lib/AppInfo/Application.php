@@ -31,8 +31,8 @@ class Application extends App {
 		$container->registerService('ReportDataCollector', function ($c) {
 			return new ReportDataCollector(
 				\OC::$server->getIntegrityCodeChecker(),
-				\OC_User::getUsers(),
 				\OC::$server->getUserManager(),
+				\OC::$server->getGroupManager(),
 				\OC_Util::getVersion(),
 				\OC_Util::getVersionString(),
 				\OC_Util::getEditionString(),

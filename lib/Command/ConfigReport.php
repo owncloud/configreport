@@ -43,8 +43,8 @@ class ConfigReport extends Command {
 	public function run(InputInterface $input, OutputInterface $output) {
 		$this->reportDataCollector = new ReportDataCollector(
 			\OC::$server->getIntegrityCodeChecker(),
-			\OC_User::getUsers(),
 			\OC::$server->getUserManager(),
+			\OC::$server->getGroupManager(),
 			\OC_Util::getVersion(),
 			\OC_Util::getVersionString(),
 			\OC_Util::getEditionString(),
