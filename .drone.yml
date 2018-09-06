@@ -10,6 +10,11 @@ pipeline:
     pull: true
     version: ${OC_VERSION}
     exclude: apps/configreport
+    db_type: ${DB_TYPE}
+    db_name: ${DB_NAME}
+    db_host: ${DB_HOST}
+    db_username: autotest
+    db_password: owncloud
 
   code-compliance-check:
     image: owncloudci/php:${PHP_VERSION}
@@ -18,6 +23,7 @@ pipeline:
       # currently fails since we rely on OC_Util
       # - make test-php-codecheck
       - make test-php-lint
+      - make test-php-style
 
   unit-tests:
     image: owncloudci/php:${PHP_VERSION}
@@ -25,7 +31,8 @@ pipeline:
     environment:
       - COVERAGE=${COVERAGE}
     commands:
-      - make test-php-unit
+      - if [ -z "${COVERAGE}" ]; then make test-php-unit; fi
+      - if [ "${COVERAGE}" = "true" ]; then make test-php-unit-dbg; fi
 
   codecov:
     image: plugins/codecov:2
@@ -50,12 +57,76 @@ pipeline:
       status: [ failure, changed ]
       event: [ push, tag ]
 
+services:
+  mysql:
+    image: mysql:5.5
+    environment:
+      - MYSQL_USER=autotest
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=owncloud
+    when:
+      matrix:
+        DB_HOST: mysql
+
+  mysqlmb4:
+    image: mysql:5.7
+    environment:
+      - MYSQL_USER=autotest
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=owncloud
+    when:
+      matrix:
+        DB_HOST: mysqlmb4
+
+  pgsql:
+    image: postgres:9.4
+    environment:
+      - POSTGRES_USER=autotest
+      - POSTGRES_PASSWORD=owncloud
+      - POSTGRES_DB=${DB_NAME}
+    when:
+      matrix:
+        DB_HOST: pgsql
+
+  oci:
+    image: deepdiver/docker-oracle-xe-11g
+    environment:
+       - ORACLE_USER=system
+       - ORACLE_PASSWORD=oracle
+       - ORACLE_DB=${DB_NAME}
+    when:
+      matrix:
+        DB_HOST: oci
+
 matrix:
   include:
 
     #master
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      DB_HOST: oci
+      DB_TYPE: oci
+      DB_NAME: XE
+
+    - PHP_VERSION: 7.1
+      OC_VERSION: daily-master-qa
+      DB_HOST: pgsql
+      DB_TYPE: pgsql
+      DB_NAME: owncloud
+
+    - PHP_VERSION: 7.1
+      OC_VERSION: daily-master-qa
+      DB_HOST: mysql
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+
+    - PHP_VERSION: 7.1
+      OC_VERSION: daily-master-qa
+      DB_HOST: mysqlmb4
+      DB_TYPE: mysql
+      DB_NAME: owncloud
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
@@ -66,6 +137,27 @@ matrix:
 
     - PHP_VERSION: 7.0
       OC_VERSION: daily-stable10-qa
+      DB_HOST: oci
+      DB_TYPE: oci
+      DB_NAME: XE
+
+    - PHP_VERSION: 7.0
+      OC_VERSION: daily-stable10-qa
+      DB_HOST: pgsql
+      DB_TYPE: pgsql
+      DB_NAME: owncloud
+
+    - PHP_VERSION: 7.0
+      OC_VERSION: daily-stable10-qa
+      DB_HOST: mysql
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+
+    - PHP_VERSION: 7.0
+      OC_VERSION: daily-stable10-qa
+      DB_HOST: mysqlmb4
+      DB_TYPE: mysql
+      DB_NAME: owncloud
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-stable10-qa

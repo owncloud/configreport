@@ -128,14 +128,13 @@ class ReportDataCollector {
 		$this->appConfigData = \OC::$server->getEventDispatcher()->dispatch('OCA\ConfigReport::loadData', $event);
 	}
 
-
 	/**
 	 * @param int $options
 	 * @param int $depth
 	 * @return string
 	 */
 	public function getReportJson($options = JSON_PRETTY_PRINT, $depth = 512) {
-		return json_encode($this->getReport(), $options, $depth);
+		return \json_encode($this->getReport(), $options, $depth);
 	}
 
 	/**
@@ -144,7 +143,7 @@ class ReportDataCollector {
 	public function addEventListenerReportData(&$report) {
 		foreach ($this->appConfigData->getArguments() as $index) {
 			foreach ($index as $innerKey => $innerVal) {
-				if (!array_key_exists($innerKey, $report)) {
+				if (!\array_key_exists($innerKey, $report)) {
 					$report[$innerKey] = $innerVal;
 				}
 			}
@@ -192,24 +191,24 @@ class ReportDataCollector {
 		// TODO $homecount should be determined by \OC::$server->getUserManager()->search()
 		// and then checking the lastLoginTime of each user object, leaving current impl intact
 		$homeCount = 0;
-		foreach($this->users as $uid) {
-			if($this->userManager->get($uid)) {
+		foreach ($this->users as $uid) {
+			if ($this->userManager->get($uid)) {
 				$homeCount++;
 			}
 		}
 
 		return [
 			'license key' => $this->licenseKey,
-			'date' => date('r'),
-			'ownCloud version' => implode('.', $this->version),
+			'date' => \date('r'),
+			'ownCloud version' => \implode('.', $this->version),
 			'ownCloud version string' => $this->versionString,
 			'ownCloud edition' => $this->editionString,
 			'server OS' => PHP_OS,
-			'server OS version' => php_uname(),
-			'server SAPI' => php_sapi_name(),
+			'server OS version' => \php_uname(),
+			'server SAPI' => \php_sapi_name(),
 			'webserver version' => $_SERVER['SERVER_SOFTWARE'],
 			'hostname' => $_SERVER['HTTP_HOST'],
-			'user count' => count($this->users),
+			'user count' => \count($this->users),
 			'user directories' => $homeCount,
 			'logged-in user' => $this->displayName,
 		];
@@ -220,7 +219,7 @@ class ReportDataCollector {
 	 */
 	private function getSystemConfigDetailArray() {
 		$keys = $this->systemConfig->getKeys();
-		$result = array();
+		$result = [];
 		foreach ($keys as $key) {
 			$result[$key] = $this->systemConfig->getFilteredValue($key);
 		}
@@ -236,8 +235,8 @@ class ReportDataCollector {
 	 * @return array sanitized array
 	 */
 	private function sanitizeValues($values) {
-		foreach($values as $key => $value) {
-			if (stripos($key, 'password') !== FALSE) {
+		foreach ($values as $key => $value) {
+			if (\stripos($key, 'password') !== false) {
 				$values[$key] = \OCP\IConfig::SENSITIVE_VALUE;
 			}
 		}
@@ -259,9 +258,8 @@ class ReportDataCollector {
 	 */
 	private function getAppsDetailArray() {
 		// Get app data
-		foreach($this->apps as &$app) {
-			if($app['active']) {
-
+		foreach ($this->apps as &$app) {
+			if ($app['active']) {
 				$appConfig = $this->appConfig->getValues($app['id'], false);
 				$app['appconfig'] = $this->sanitizeValues($appConfig);
 			}
@@ -281,37 +279,37 @@ class ReportDataCollector {
 		];
 
 		// Get the phpinfo, parse it, and record it (parts from http://www.php.net/manual/en/function.phpinfo.php#87463)
-		ob_start();
-		phpinfo(-1);
+		\ob_start();
+		\phpinfo(-1);
 
-		$phpinfo = preg_replace(
-			array('#^.*<body>(.*)</body>.*$#ms', '#<h2>PHP License</h2>.*$#ms',
+		$phpinfo = \preg_replace(
+			['#^.*<body>(.*)</body>.*$#ms', '#<h2>PHP License</h2>.*$#ms',
 				'#<h1>Configuration</h1>#', "#\r?\n#", "#</(h1|h2|h3|tr)>#", '# +<#',
 				"#[ \t]+#", '#&nbsp;#', '#  +#', '# class=".*?"#', '%&#039;%',
 				'#<tr>(?:.*?)" src="(?:.*?)=(.*?)" alt="PHP Logo" /></a>'
 				. '<h1>PHP Version (.*?)</h1>(?:\n+?)</td></tr>#',
 				'#<h1><a href="(?:.*?)\?=(.*?)">PHP Credits</a></h1>#',
 				'#<tr>(?:.*?)" src="(?:.*?)=(.*?)"(?:.*?)Zend Engine (.*?),(?:.*?)</tr>#',
-				"# +#", '#<tr>#', '#</tr>#'),
-			array('$1', '', '', '', '</$1>' . "\n", '<', ' ', ' ', ' ', '', ' ',
+				"# +#", '#<tr>#', '#</tr>#'],
+			['$1', '', '', '', '</$1>' . "\n", '<', ' ', ' ', ' ', '', ' ',
 				'<h2>PHP Configuration</h2>' . "\n" . '<tr><td>PHP Version</td><td>$2</td></tr>' .
 				"\n" . '<tr><td>PHP Egg</td><td>$1</td></tr>',
 				'<tr><td>PHP Credits Egg</td><td>$1</td></tr>',
 				'<tr><td>Zend Engine</td><td>$2</td></tr>' . "\n" .
-				'<tr><td>Zend Egg</td><td>$1</td></tr>', ' ', '%S%', '%E%'),
-			ob_get_clean());
+				'<tr><td>Zend Egg</td><td>$1</td></tr>', ' ', '%S%', '%E%'],
+			\ob_get_clean());
 
-		$sections = explode('<h2>', strip_tags($phpinfo, '<h2><th><td>'));
+		$sections = \explode('<h2>', \strip_tags($phpinfo, '<h2><th><td>'));
 		unset($sections[0]);
 
-		$result = array();
-		$sensitiveServerConfigs = array_flip($sensitiveServerConfigs);
+		$result = [];
+		$sensitiveServerConfigs = \array_flip($sensitiveServerConfigs);
 		foreach ($sections as $section) {
-			$n = substr($section, 0, strpos($section, '</h2>'));
+			$n = \substr($section, 0, \strpos($section, '</h2>'));
 			if ($n === 'PHP Variables') {
 				continue;
 			}
-			preg_match_all(
+			\preg_match_all(
 				'#%S%(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?%E%#',
 				$section, $matches, PREG_SET_ORDER);
 			foreach ($matches as $match) {
@@ -319,14 +317,12 @@ class ReportDataCollector {
 					continue;
 					// filter all key which contain 'password'
 				}
-				if(!isset($match[3])) {
+				if (!isset($match[3])) {
 					$value = isset($match[2]) ? $match[2] : null;
-				}
-				elseif($match[2] == $match[3]) {
+				} elseif ($match[2] == $match[3]) {
 					$value = $match[2];
-				}
-				else {
-					$value = array_slice($match, 2);
+				} else {
+					$value = \array_slice($match, 2);
 				}
 				$result[$n][$match[1]] = $value;
 			}
