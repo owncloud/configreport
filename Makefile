@@ -78,3 +78,6 @@ vendor-bin/owncloud-codestyle/vendor: vendor/bamarni/composer-bin-plugin vendor-
 
 vendor-bin/owncloud-codestyle/composer.lock: vendor-bin/owncloud-codestyle/composer.json
 	@echo owncloud-codestyle composer.lock is not up to date.
+
+vendor/bin/phpunit: composer.lock
+	$(COMPOSER_BIN) install
