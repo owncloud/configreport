@@ -16,6 +16,41 @@ pipeline:
     db_username: autotest
     db_password: owncloud
 
+  install-app:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    commands:
+      - cd /var/www/owncloud/
+      - php occ a:l
+      - php occ a:e configreport
+      - php occ a:e testing
+      - php occ a:l
+      - php occ config:system:set trusted_domains 1 --value=owncloud
+      - php occ log:manage --level 0
+    when:
+      matrix:
+        NEED_INSTALL_APP: true
+
+  fix-permissions:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    commands:
+      - chown www-data /var/www/owncloud -R
+      - chmod +x /var/www/owncloud/tests/acceptance/run.sh
+    when:
+      matrix:
+        NEED_SERVER: true
+
+  owncloud-log:
+    image: owncloud/ubuntu:16.04
+    detach: true
+    pull: true
+    commands:
+      - tail -f /var/www/owncloud/data/owncloud.log
+    when:
+      matrix:
+        NEED_SERVER: true
+
   code-compliance-check:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
@@ -33,6 +68,19 @@ pipeline:
     commands:
       - if [ -z "${COVERAGE}" ]; then make test-php-unit; fi
       - if [ "${COVERAGE}" = "true" ]; then make test-php-unit-dbg; fi
+
+  api-acceptance-tests:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    environment:
+      - TEST_SERVER_URL=http://owncloud
+      - PLATFORM=Linux
+      - BEHAT_SUITE=${BEHAT_SUITE}
+    commands:
+      - make test-acceptance-api
+    when:
+      matrix:
+        TEST_SUITE: api-acceptance
 
   codecov:
     image: plugins/codecov:2
@@ -100,6 +148,17 @@ services:
       matrix:
         DB_HOST: oci
 
+  owncloud:
+    image: owncloudci/php:${PHP_VERSION}
+    pull: true
+    environment:
+      - APACHE_WEBROOT=/var/www/owncloud/
+    command: [ "/usr/local/bin/apachectl", "-e", "debug", "-D", "FOREGROUND" ]
+    when:
+      matrix:
+        NEED_SERVER: true
+
+
 matrix:
   include:
 
@@ -112,12 +171,20 @@ matrix:
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiConfigReport
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
       DB_HOST: pgsql
       DB_TYPE: pgsql
       DB_NAME: owncloud
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiConfigReport
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
       DB_HOST: mysql
       DB_TYPE: mysql
       DB_NAME: owncloud
@@ -149,6 +216,10 @@ matrix:
 
     - PHP_VERSION: 7.0
       OC_VERSION: daily-stable10-qa
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiConfigReport
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
       DB_HOST: mysql
       DB_TYPE: mysql
       DB_NAME: owncloud
