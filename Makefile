@@ -61,6 +61,11 @@ test-php-style-fix:        ## Run php-cs-fixer and fix code style issues
 test-php-style-fix: vendor-bin/owncloud-codestyle/vendor
 	$(PHP_CS_FIXER) fix -v --diff --diff-format udiff --allow-risky yes
 
+.PHONY: test-acceptance-api
+test-acceptance-api:       ## Run API acceptance tests
+test-acceptance-api: vendor/bin/phpunit
+	pushd ../../tests/acceptance && ./run.sh --config ../../apps/configreport/tests/acceptance/config/behat.yml --type api && popd
+
 ##
 ## Dependency management
 ##--------------------------------------
@@ -83,3 +88,6 @@ vendor-bin/owncloud-codestyle/vendor: vendor/bamarni/composer-bin-plugin vendor-
 
 vendor-bin/owncloud-codestyle/composer.lock: vendor-bin/owncloud-codestyle/composer.json
 	@echo owncloud-codestyle composer.lock is not up to date.
+
+vendor/bin/phpunit: composer.lock
+	$(COMPOSER_BIN) install
