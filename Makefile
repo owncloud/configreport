@@ -64,7 +64,7 @@ test-php-style-fix: vendor-bin/owncloud-codestyle/vendor
 .PHONY: test-acceptance-api
 test-acceptance-api:       ## Run API acceptance tests
 test-acceptance-api: vendor/bin/phpunit
-	pushd ../../tests/acceptance && ./run.sh --config ../../apps/configreport/tests/acceptance/config/behat.yml --type api && popd
+	../../tests/acceptance/run.sh --config tests/acceptance/config/behat.yml --type api
 
 ##
 ## Dependency management
