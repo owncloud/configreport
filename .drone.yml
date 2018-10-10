@@ -165,6 +165,10 @@ matrix:
     #master
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiConfigReport
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
       DB_HOST: oci
       DB_TYPE: oci
       DB_NAME: XE
@@ -204,6 +208,10 @@ matrix:
 
     - PHP_VERSION: 7.0
       OC_VERSION: daily-stable10-qa
+      TEST_SUITE: api-acceptance
+      BEHAT_SUITE: apiConfigReport
+      NEED_SERVER: true
+      NEED_INSTALL_APP: true
       DB_HOST: oci
       DB_TYPE: oci
       DB_NAME: XE
