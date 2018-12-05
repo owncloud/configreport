@@ -28,12 +28,12 @@ help:
 .PHONY: test-php-unit
 test-php-unit:             ## Run php unit tests
 test-php-unit:
-	$(PHPUNIT) --configuration ./tests/unit/phpunit.xml
+	$(PHPUNIT) --configuration ./phpunit.xml --testsuite unit
 
 .PHONY: test-php-unit-dbg
 test-php-unit-dbg:         ## Run php unit tests using phpdbg
 test-php-unit-dbg:
-	$(PHPUNITDBG) --configuration ./tests/unit/phpunit.xml
+	$(PHPUNITDBG) --configuration ./phpunit.xml --testsuite unit
 
 .PHONY: test-php-codecheck
 test-php-codecheck:        ## Run occ app code checks
