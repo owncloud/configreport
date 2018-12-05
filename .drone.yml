@@ -5,7 +5,7 @@ workspace:
 branches: [master, release*]
 
 pipeline:
-  install-server:
+  install-core:
     image: owncloudci/core
     pull: true
     version: ${OC_VERSION}
@@ -15,6 +15,9 @@ pipeline:
     db_host: ${DB_HOST}
     db_username: autotest
     db_password: owncloud
+    when:
+      matrix:
+        NEED_CORE: true
 
   install-app:
     image: owncloudci/php:${PHP_VERSION}
@@ -51,16 +54,16 @@ pipeline:
       matrix:
         NEED_SERVER: true
 
-  code-compliance-check:
+  owncloud-coding-standard:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
     commands:
-      # currently fails since we rely on OC_Util
-      # - make test-php-codecheck
-      - make test-php-lint
       - make test-php-style
+    when:
+      matrix:
+        TEST_SUITE: owncloud-coding-standard
 
-  unit-tests:
+  phpunit-tests:
     image: owncloudci/php:${PHP_VERSION}
     pull: true
     environment:
@@ -68,6 +71,9 @@ pipeline:
     commands:
       - if [ -z "${COVERAGE}" ]; then make test-php-unit; fi
       - if [ "${COVERAGE}" = "true" ]; then make test-php-unit-dbg; fi
+    when:
+      matrix:
+        TEST_SUITE: phpunit
 
   api-acceptance-tests:
     image: owncloudci/php:${PHP_VERSION}
@@ -87,9 +93,7 @@ pipeline:
     secrets: [codecov_token]
     pull: true
     paths:
-     - tests/output
-    files:
-     - "*.xml"
+      - tests/output/*.xml
     when:
       event: [push, pull_request]
       status:  [ success, failure ]
@@ -99,11 +103,11 @@ pipeline:
   notify:
     image: plugins/slack:1
     pull: true
-    secrets: [ slack_webhook ]
+    secrets: [slack_webhook]
     channel: builds
     when:
-      status: [ failure, changed ]
-      event: [ push, tag ]
+      status: [failure, changed]
+      event: [push, tag]
 
 services:
   mysql:
@@ -158,15 +162,21 @@ services:
       matrix:
         NEED_SERVER: true
 
-
 matrix:
   include:
+    # owncloud-coding-standard
+    - PHP_VERSION: 5.6
+      TEST_SUITE: owncloud-coding-standard
+
+    - PHP_VERSION: 7.2
+      TEST_SUITE: owncloud-coding-standard
 
     #master
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiConfigReport
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       DB_HOST: oci
@@ -177,6 +187,7 @@ matrix:
       OC_VERSION: daily-master-qa
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiConfigReport
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       DB_HOST: pgsql
@@ -187,6 +198,7 @@ matrix:
       OC_VERSION: daily-master-qa
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiConfigReport
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       DB_HOST: mysql
@@ -195,21 +207,28 @@ matrix:
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
+      TEST_SUITE: phpunit
+      NEED_CORE: true
       DB_HOST: mysqlmb4
       DB_TYPE: mysql
       DB_NAME: owncloud
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-master-qa
+      TEST_SUITE: phpunit
+      NEED_CORE: true
 
     # stable10
     - PHP_VERSION: 5.6
       OC_VERSION: daily-stable10-qa
+      TEST_SUITE: phpunit
+      NEED_CORE: true
 
     - PHP_VERSION: 7.0
       OC_VERSION: daily-stable10-qa
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiConfigReport
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       DB_HOST: oci
@@ -218,6 +237,8 @@ matrix:
 
     - PHP_VERSION: 7.0
       OC_VERSION: daily-stable10-qa
+      TEST_SUITE: phpunit
+      NEED_CORE: true
       DB_HOST: pgsql
       DB_TYPE: pgsql
       DB_NAME: owncloud
@@ -225,6 +246,7 @@ matrix:
     - PHP_VERSION: 7.0
       OC_VERSION: daily-stable10-qa
       TEST_SUITE: api-acceptance
+      NEED_CORE: true
       BEHAT_SUITE: apiConfigReport
       NEED_SERVER: true
       NEED_INSTALL_APP: true
@@ -234,14 +256,19 @@ matrix:
 
     - PHP_VERSION: 7.0
       OC_VERSION: daily-stable10-qa
+      TEST_SUITE: phpunit
+      NEED_CORE: true
       DB_HOST: mysqlmb4
       DB_TYPE: mysql
       DB_NAME: owncloud
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-stable10-qa
+      TEST_SUITE: phpunit
+      NEED_CORE: true
       COVERAGE: true
 
     - PHP_VERSION: 7.2
       OC_VERSION: daily-stable10-qa
-
+      TEST_SUITE: phpunit
+      NEED_CORE: true

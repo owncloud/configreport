@@ -11,20 +11,15 @@ project_directory=$(CURDIR)/../$(app_name)
 
 occ=$(CURDIR)/../../occ
 
-
-
 # bin file definitions
 PHPUNIT=php -d zend.enable_gc=0  ../../lib/composer/bin/phpunit
 PHPUNITDBG=phpdbg -qrr -d memory_limit=4096M -d zend.enable_gc=0 "../../lib/composer/bin/phpunit"
 PHP_CS_FIXER=php -d zend.enable_gc=0 vendor-bin/owncloud-codestyle/vendor/bin/php-cs-fixer
-PHPLINT=php -d zend.enable_gc=0 ../../lib/composer/bin/parallel-lint
 
 .DEFAULT_GOAL := help
 
 help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
-
-
 
 ##
 ## Tests
@@ -46,11 +41,6 @@ test-php-codecheck:
 	$(occ) app:check-code $(app_name) -c private -c strong-comparison
 	$(occ) app:check-code $(app_name) -c deprecation
 
-.PHONY: test-php-lint
-test-php-lint:             ## Run parallel-lint
-test-php-lint:
-	$(PHPLINT) . --exclude 3rdparty --exclude build .
-
 .PHONY: test-php-style
 test-php-style:            ## Run php-cs-fixer and check owncloud code-style
 test-php-style: vendor-bin/owncloud-codestyle/vendor
@@ -64,7 +54,7 @@ test-php-style-fix: vendor-bin/owncloud-codestyle/vendor
 .PHONY: test-acceptance-api
 test-acceptance-api:       ## Run API acceptance tests
 test-acceptance-api: vendor/bin/phpunit
-	../../tests/acceptance/run.sh --config tests/acceptance/config/behat.yml --type api
+	../../tests/acceptance/run.sh --remote --type api
 
 ##
 ## Dependency management
