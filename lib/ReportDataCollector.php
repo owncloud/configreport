@@ -173,6 +173,7 @@ class ReportDataCollector {
 			'integritychecker' => $this->getIntegrityCheckerDetailArray(),
 			'core' => $this->getCoreConfigArray(),
 			'apps' => $this->getAppsDetailArray(),
+			'tables' => $this->getOCTablesArray(),
 			'migrations' => $this->getOcMigrationArray(),
 			'phpinfo' => $this->getPhpInfoDetailArray()
 		];
@@ -313,6 +314,50 @@ class ReportDataCollector {
 			->fetchAll();
 
 		return $results;
+	}
+
+	/**
+	 * @return array
+	 */
+	private function getOCTablesArray() {
+		$ocTables = [];
+		//Get tables structure/description/schema from owncloud db
+		$schemaManager = $this->connection->getSchemaManager();
+		$tableNames = $schemaManager->listTableNames();
+		foreach ($tableNames as $tableName) {
+			$ocTables['tableNames'][$tableName] = [];
+			$tableDetail = $schemaManager->listTableDetails($tableName);
+			$columns = $tableDetail->getColumns();
+			foreach ($columns as $column) {
+				$ocTables['tableNames'][$tableName]['fields'][] = [
+					$column->getName() =>
+						[
+							'type' => $column->getType()->getName(),
+							'null' => !$column->getNotnull(),
+							'default' => $column->getDefault(),
+							'autoIncrement' => $column->getAutoincrement(),
+						]
+				];
+			}
+			$indexes = $tableDetail->getIndexes();
+			foreach ($indexes as $index) {
+				$ocTables['tableNames'][$tableName]['index'][] = [
+					'indexName' => $index->getName(),
+					'columns' => $index->getColumns(),
+					'unique' => $index->isUnique()
+				];
+			}
+			if ($tableDetail->hasPrimaryKey()) {
+				$primaryColumns = $tableDetail->getPrimaryKeyColumns();
+			} else {
+				$primaryColumns = [];
+			}
+			$ocTables['tableNames'][$tableName][] = [
+				'primaryColumns' => $primaryColumns
+			];
+		}
+
+		return $ocTables;
 	}
 
 	/**
