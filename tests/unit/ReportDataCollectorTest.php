@@ -55,10 +55,8 @@ class ReportDataCollectorTest extends TestCase {
 	protected function setUp() {
 		parent::setUp();
 
-		//Todo - To fix this test, the ReportDataCollector needs some refactoring
-		$this->markTestSkipped('This test can be skipped for now. But needs to be fixed');
-
 		$this->integrityChecker = $this->createMock(Checker::class);
+		$this->overwriteService('IntegrityCodeChecker', $this->integrityChecker);
 		$this->userManager = $this->createMock(Manager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->sysConfig = $this->createMock(SystemConfig::class);
@@ -71,7 +69,14 @@ class ReportDataCollectorTest extends TestCase {
 				$this->connection);
 	}
 
+	protected function tearDown() {
+		$this->restoreService('IntegrityCodeChecker');
+		parent::tearDown();
+	}
+
 	public function testGetOcMigrationArray() {
+		//Todo - To fix this test, the ReportDataCollector needs some refactoring
+		$this->markTestSkipped('This test can be skipped for now. But needs to be fixed');
 		$coreApps = ['core', 'dav', 'federatedfilesharing', 'files_external', 'files_sharing', 'files_trashbin'];
 		$results = $this->invokePrivate($this->reportDataCollector, 'getOcMigrationArray', []);
 		//In this test we are going to look into the migrations of core apps only.
@@ -92,5 +97,535 @@ class ReportDataCollectorTest extends TestCase {
 				'20170804201125', '20170804201253', '20170814051424', '20170804201125', '20170804201253', '20170830112305',
 				'20171115154900', '20171215103657', '20170804201125', '20180622095921']);
 		}
+	}
+
+	public function testGetOCTablesArray() {
+		$result = $this->invokePrivate($this->reportDataCollector, 'getOCTablesArray', []);
+		/**
+		 * We cannot test all tables. But we can test few tables like
+		 * oc_groups, oc_accounts
+		 */
+
+		$dbtype = \OC::$server->getSystemConfig()->getValue('dbtype');
+		if ($dbtype === 'mysql') {
+			$expectedResult = [
+				'oc_accounts' => [
+					'fields' => [
+						['id' => [
+							'type' => 'bigint',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => true
+						]],
+						['email' => [
+							'type' => 'string',
+							'null' => true,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['user_id' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['lower_user_id' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['display_name' => [
+							'type' => 'string',
+							'null' => true,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['quota' => [
+							'type' => 'string',
+							'null' => true,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['last_login' => [
+							'type' => 'integer',
+							'null' => false,
+							'default' => '0',
+							'autoIncrement' => false
+						]],
+						['backend' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['home' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['state' => [
+							'type' => 'smallint',
+							'null' => false,
+							'default' => '0',
+							'autoIncrement' => false
+						]]
+					],
+					'index' => [
+						[
+							'indexName' => 'PRIMARY',
+							'columns' => [
+								'id',
+							],
+							'unique' => true
+						],
+						[
+							'indexName' => 'UNIQ_907AA303A76ED395',
+							'columns' => [
+								'user_id',
+							],
+							'unique' => true
+						],
+						[
+							'indexName' => 'lower_user_id_index',
+							'columns' => [
+								'lower_user_id',
+							],
+							'unique' => true
+						],
+						[
+							'indexName' => 'display_name_index',
+							'columns' => [
+								'display_name',
+							],
+							'unique' => false
+						],
+						[
+							'indexName' => 'email_index',
+							'columns' => [
+								'email',
+							],
+							'unique' => false
+						],
+					],
+					[
+						'primaryColumns' => ['id']
+					]
+				],
+				'oc_groups' => [
+					'fields' => [
+						['gid' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => '',
+							'autoIncrement' => false
+						]]
+					],
+					'index' => [
+						[
+							'indexName' => 'PRIMARY',
+							'columns' => [
+								'gid',
+							],
+							'unique' => true
+						],
+					],
+					[
+						'primaryColumns' => ['gid']
+					]
+				]
+			];
+		} elseif ($dbtype === 'pgsql') {
+			$expectedResult = [
+				'oc_accounts' => [
+					'fields' => [
+						['id' => [
+							'type' => 'bigint',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => true
+						]],
+						['email' => [
+							'type' => 'string',
+							'null' => true,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['user_id' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['lower_user_id' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['display_name' => [
+							'type' => 'string',
+							'null' => true,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['quota' => [
+							'type' => 'string',
+							'null' => true,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['last_login' => [
+							'type' => 'integer',
+							'null' => false,
+							'default' => '0',
+							'autoIncrement' => false
+						]],
+						['backend' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['home' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['state' => [
+							'type' => 'smallint',
+							'null' => false,
+							'default' => '0',
+							'autoIncrement' => false
+						]]
+					],
+					'index' => [
+						[
+							'indexName' => 'lower_user_id_index',
+							'columns' => [
+								'lower_user_id',
+							],
+							'unique' => true
+						],
+						[
+							'indexName' => 'display_name_index',
+							'columns' => [
+								'display_name',
+							],
+							'unique' => false
+						],
+						[
+							'indexName' => 'oc_accounts_pkey',
+							'columns' => [
+								'id',
+							],
+							'unique' => true
+						],
+						[
+							'indexName' => 'email_index',
+							'columns' => [
+								'email',
+							],
+							'unique' => false
+						],
+						[
+							'indexName' => 'uniq_907aa303a76ed395',
+							'columns' => [
+								'user_id',
+							],
+							'unique' => true
+						],
+					],
+					[
+						'primaryColumns' => ['id']
+					]
+				],
+				'oc_groups' => [
+					'fields' => [
+						['gid' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => '',
+							'autoIncrement' => false
+						]]
+					],
+					'index' => [
+						[
+							'indexName' => 'oc_groups_pkey',
+							'columns' => [
+								'gid',
+							],
+							'unique' => true
+						],
+					],
+					[
+						'primaryColumns' => ['gid']
+					]
+				]
+			];
+		} elseif ($dbtype === 'sqlite' || $dbtype === 'sqlite3') {
+			$expectedResult = [
+				'oc_accounts' => [
+					'fields' => [
+						['id' => [
+							'type' => 'integer',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => true
+						]],
+						['email' => [
+							'type' => 'string',
+							'null' => true,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['user_id' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['lower_user_id' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['display_name' => [
+							'type' => 'string',
+							'null' => true,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['quota' => [
+							'type' => 'string',
+							'null' => true,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['last_login' => [
+							'type' => 'integer',
+							'null' => false,
+							'default' => '0',
+							'autoIncrement' => false
+						]],
+						['backend' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['home' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['state' => [
+							'type' => 'smallint',
+							'null' => false,
+							'default' => '0',
+							'autoIncrement' => false
+						]]
+					],
+					'index' => [
+						[
+							'indexName' => 'primary',
+							'columns' => [
+								'id',
+							],
+							'unique' => true
+						],
+						[
+							'indexName' => 'email_index',
+							'columns' => [
+								'email',
+							],
+							'unique' => false
+						],
+						[
+							'indexName' => 'display_name_index',
+							'columns' => [
+								'display_name',
+							],
+							'unique' => false
+						],
+						[
+							'indexName' => 'lower_user_id_index',
+							'columns' => [
+								'lower_user_id',
+							],
+							'unique' => true
+						],
+						[
+							'indexName' => 'UNIQ_907AA303A76ED395',
+							'columns' => [
+								'user_id',
+							],
+							'unique' => true
+						],
+					],
+					[
+						'primaryColumns' => ['id']
+					]
+				],
+				'oc_groups' => [
+					'fields' => [
+						['gid' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => '',
+							'autoIncrement' => false
+						]]
+					],
+					'index' => [
+						[
+							'indexName' => 'primary',
+							'columns' => [
+								'gid',
+							],
+							'unique' => true
+						],
+					],
+					[
+						'primaryColumns' => ['gid']
+					]
+				]
+			];
+		} elseif ($dbtype === 'oci') {
+			$expectedResult = [
+				'oc_accounts' => [
+					'fields' => [
+						['id' => [
+							'type' => 'bigint',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => true
+						]],
+						['email' => [
+							'type' => 'string',
+							'null' => true,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['user_id' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['lower_user_id' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['display_name' => [
+							'type' => 'string',
+							'null' => true,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['quota' => [
+							'type' => 'string',
+							'null' => true,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['last_login' => [
+							'type' => 'integer',
+							'null' => false,
+							'default' => '0',
+							'autoIncrement' => false
+						]],
+						['backend' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['home' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => null,
+							'autoIncrement' => false
+						]],
+						['state' => [
+							'type' => 'smallint',
+							'null' => false,
+							'default' => '0',
+							'autoIncrement' => false
+						]]
+					],
+					'index' => [
+						[
+							'indexName' => 'PRIMARY',
+							'columns' => [
+								'id',
+							],
+							'unique' => true
+						],
+						[
+							'indexName' => 'UNIQ_907AA303A76ED395',
+							'columns' => [
+								'user_id',
+							],
+							'unique' => true
+						],
+						[
+							'indexName' => 'lower_user_id_index',
+							'columns' => [
+								'lower_user_id',
+							],
+							'unique' => true
+						],
+						[
+							'indexName' => 'display_name_index',
+							'columns' => [
+								'display_name',
+							],
+							'unique' => false
+						],
+						[
+							'indexName' => 'email_index',
+							'columns' => [
+								'email',
+							],
+							'unique' => false
+						],
+					],
+					[
+						'primaryColumns' => ['id']
+					]
+				],
+				'oc_groups' => [
+					'fields' => [
+						['gid' => [
+							'type' => 'string',
+							'null' => false,
+							'default' => '',
+							'autoIncrement' => false
+						]]
+					],
+					'index' => [
+						[
+							'indexName' => 'PRIMARY',
+							'columns' => [
+								'gid',
+							],
+							'unique' => true
+						],
+					],
+					[
+						'primaryColumns' => ['gid']
+					]
+				]
+			];
+		}
+		$this->asserttrue(isset($result['tableNames']['oc_accounts']));
+		$this->assertEquals($expectedResult['oc_accounts'], $result['tableNames']['oc_accounts'], "", 0.0, 10, true);
+		$this->assertEquals($expectedResult['oc_groups'], $result['tableNames']['oc_groups'], '', 0.0, 10, true);
 	}
 }
