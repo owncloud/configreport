@@ -176,6 +176,7 @@ matrix:
       OC_VERSION: daily-master-qa
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiConfigReport
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       DB_HOST: oci
@@ -186,6 +187,7 @@ matrix:
       OC_VERSION: daily-master-qa
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiConfigReport
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       DB_HOST: pgsql
@@ -196,6 +198,7 @@ matrix:
       OC_VERSION: daily-master-qa
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiConfigReport
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       DB_HOST: mysql
@@ -225,6 +228,7 @@ matrix:
       OC_VERSION: daily-stable10-qa
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiConfigReport
+      NEED_CORE: true
       NEED_SERVER: true
       NEED_INSTALL_APP: true
       DB_HOST: oci
@@ -242,6 +246,7 @@ matrix:
     - PHP_VERSION: 7.0
       OC_VERSION: daily-stable10-qa
       TEST_SUITE: api-acceptance
+      NEED_CORE: true
       BEHAT_SUITE: apiConfigReport
       NEED_SERVER: true
       NEED_INSTALL_APP: true
