@@ -502,7 +502,7 @@ class ReportDataCollectorTest extends TestCase {
 							'type' => 'bigint',
 							'null' => false,
 							'default' => null,
-							'autoIncrement' => true
+							'autoIncrement' => false
 						]],
 						['email' => [
 							'type' => 'string',
@@ -561,43 +561,43 @@ class ReportDataCollectorTest extends TestCase {
 					],
 					'index' => [
 						[
-							'indexName' => 'PRIMARY',
+							'indexName' => 'primary',
 							'columns' => [
-								'id',
+								"\"id\"",
 							],
 							'unique' => true
 						],
 						[
-							'indexName' => 'UNIQ_907AA303A76ED395',
+							'indexName' => 'uniq_907aa303a76ed395',
 							'columns' => [
-								'user_id',
+								"\"user_id\"",
 							],
 							'unique' => true
 						],
 						[
 							'indexName' => 'lower_user_id_index',
 							'columns' => [
-								'lower_user_id',
+								"\"lower_user_id\"",
 							],
 							'unique' => true
 						],
 						[
 							'indexName' => 'display_name_index',
 							'columns' => [
-								'display_name',
+								"\"display_name\"",
 							],
 							'unique' => false
 						],
 						[
 							'indexName' => 'email_index',
 							'columns' => [
-								'email',
+								"\"email\"",
 							],
 							'unique' => false
 						],
 					],
 					[
-						'primaryColumns' => ['id']
+						'primaryColumns' => ["\"id\""]
 					]
 				],
 				'oc_groups' => [
@@ -611,21 +611,28 @@ class ReportDataCollectorTest extends TestCase {
 					],
 					'index' => [
 						[
-							'indexName' => 'PRIMARY',
+							'indexName' => 'primary',
 							'columns' => [
-								'gid',
+								"\"gid\"",
 							],
 							'unique' => true
 						],
 					],
 					[
-						'primaryColumns' => ['gid']
+						'primaryColumns' => ["\"gid\""]
 					]
 				]
 			];
 		}
-		$this->asserttrue(isset($result['tableNames']['oc_accounts']));
-		$this->assertEquals($expectedResult['oc_accounts'], $result['tableNames']['oc_accounts'], "", 0.0, 10, true);
-		$this->assertEquals($expectedResult['oc_groups'], $result['tableNames']['oc_groups'], '', 0.0, 10, true);
+
+		if ($dbtype === 'oci') {
+			$this->asserttrue(isset($result['tableNames']["\"oc_accounts\""]));
+			$this->assertEquals($expectedResult['oc_accounts'], $result['tableNames']["\"oc_accounts\""], "", 0.0, 10, true);
+			$this->assertEquals($expectedResult['oc_groups'], $result['tableNames']["\"oc_groups\""], '', 0.0, 10, true);
+		} else {
+			$this->asserttrue(isset($result['tableNames']['oc_accounts']));
+			$this->assertEquals($expectedResult['oc_accounts'], $result['tableNames']['oc_accounts'], "", 0.0, 10, true);
+			$this->assertEquals($expectedResult['oc_groups'], $result['tableNames']['oc_groups'], '', 0.0, 10, true);
+		}
 	}
 }
