@@ -9,6 +9,8 @@ endif
 app_name=$(notdir $(CURDIR))
 project_directory=$(CURDIR)/../$(app_name)
 
+acceptance_test_deps=vendor-bin/behat/vendor
+
 occ=$(CURDIR)/../../occ
 
 # bin file definitions
@@ -16,11 +18,19 @@ PHPUNIT=php -d zend.enable_gc=0  ../../lib/composer/bin/phpunit
 PHPUNITDBG=phpdbg -qrr -d memory_limit=4096M -d zend.enable_gc=0 "../../lib/composer/bin/phpunit"
 PHP_CS_FIXER=php -d zend.enable_gc=0 vendor-bin/owncloud-codestyle/vendor/bin/php-cs-fixer
 PHP_CODESNIFFER=vendor-bin/php_codesniffer/vendor/bin/phpcs
+BEHAT_BIN=vendor-bin/behat/vendor/bin/behat
 
 .DEFAULT_GOAL := help
 
 help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+
+.PHONY: clean
+clean: clean-deps
+
+.PHONY: clean-deps
+clean-deps:
+	rm -Rf vendor-bin/**/vendor vendor-bin/**/composer.lock
 
 ##
 ## Tests
@@ -55,8 +65,8 @@ test-php-style-fix: vendor-bin/owncloud-codestyle/vendor
 
 .PHONY: test-acceptance-api
 test-acceptance-api:       ## Run API acceptance tests
-test-acceptance-api: vendor/bin/phpunit
-	../../tests/acceptance/run.sh --remote --type api
+test-acceptance-api: $(acceptance_test_deps)
+	BEHAT_BIN=$(BEHAT_BIN) ../../tests/acceptance/run.sh --remote --type api
 
 ##
 ## Dependency management
@@ -89,3 +99,9 @@ vendor-bin/php_codesniffer/composer.lock: vendor-bin/php_codesniffer/composer.js
 
 vendor/bin/phpunit: composer.lock
 	$(COMPOSER_BIN) install
+
+vendor-bin/behat/vendor: vendor/bamarni/composer-bin-plugin vendor-bin/behat/composer.lock
+	composer bin behat install --no-progress
+
+vendor-bin/behat/composer.lock: vendor-bin/behat/composer.json
+	@echo behat composer.lock is not up to date.
