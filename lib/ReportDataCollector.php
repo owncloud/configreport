@@ -25,6 +25,8 @@ use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUser;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use OCP\Files\External\Service\IGlobalStoragesService;
+use OCP\Files\External\IStorageConfig;
 
 /**
  * @package OCA\ConfigReport\Report
@@ -94,6 +96,9 @@ class ReportDataCollector {
 	/** @var IDBConnection */
 	private $connection;
 
+	/** @var IGlobalStoragesService */
+	private $globalStoragesService;
+
 	/**
 	 * @param Checker $integrityChecker
 	 * @param Manager $userManager
@@ -105,6 +110,7 @@ class ReportDataCollector {
 	 * @param SystemConfig $systemConfig
 	 * @param IAppConfig $appConfig
 	 * @param IDBConnection $connection
+	 * @param IGlobalStoragesService $globalStoragesService
 	 */
 	public function __construct(
 		Checker $integrityChecker,
@@ -116,7 +122,8 @@ class ReportDataCollector {
 		$displayName,
 		SystemConfig $systemConfig,
 		IAppConfig $appConfig,
-		IDBConnection $connection
+		IDBConnection $connection,
+		IGlobalStoragesService $globalStoragesService
 	) {
 		$this->integrityChecker = $integrityChecker;
 		$this->userManager = $userManager;
@@ -132,6 +139,7 @@ class ReportDataCollector {
 		$this->apps = \OC_App::listAllApps();
 		$this->appConfig = $appConfig;
 		$this->connection = $connection;
+		$this->globalStoragesService = $globalStoragesService;
 
 		$event = new GenericEvent();
 		$this->appConfigData = \OC::$server->getEventDispatcher()->dispatch('OCA\ConfigReport::loadData', $event);
@@ -173,6 +181,7 @@ class ReportDataCollector {
 			'integritychecker' => $this->getIntegrityCheckerDetailArray(),
 			'core' => $this->getCoreConfigArray(),
 			'apps' => $this->getAppsDetailArray(),
+			'mounts' => $this->getMountsArray(),
 			'tables' => $this->getOCTablesArray(),
 			'migrations' => $this->getOcMigrationArray(),
 			'phpinfo' => $this->getPhpInfoDetailArray()
@@ -182,6 +191,42 @@ class ReportDataCollector {
 		$this->addEventListenerReportData($report);
 
 		return $report;
+	}
+
+	/**
+	 * @return array
+	 */
+	private function getMountsArray() {
+		/** @var IStorageConfig[] $mounts */
+		$mounts = $this->globalStoragesService->getStorageForAllUsers();
+
+		$mountsArray = [];
+
+		foreach ($mounts as $mount) {
+			$applicableUsers = \implode(', ', $mount->getApplicableUsers());
+			$applicableGroups = \implode(', ', $mount->getApplicableGroups());
+
+			if ($applicableUsers === '' && $applicableGroups === '') {
+				$applicableUsers = 'All';
+			}
+
+			$configuration = $mount->getBackendOptions();
+			if (isset($configuration['password'])) {
+				$configuration['password'] = \OCP\IConfig::SENSITIVE_VALUE;
+			}
+			$mountsArray[] = [
+				'id' => $mount->getId(),
+				'mount_point' => $mount->getMountPoint(),
+				'storage' => $mount->getBackend()->getText(),
+				'authentication_type' => $mount->getAuthMechanism()->getText(),
+				'configuration' => $configuration,
+				'options' => $mount->getMountOptions(),
+				'applicable_users' => $applicableUsers,
+				'applicable_groups' => $applicableGroups,
+				'type' => $mount->getType() === IStorageConfig::MOUNT_TYPE_ADMIN ? 'Admin' : 'Personal'
+			];
+		}
+		return $mountsArray;
 	}
 
 	/**
