@@ -39,7 +39,8 @@ class Application extends App {
 				\OCP\User::getDisplayName(),
 				\OC::$server->getSystemConfig(),
 				\OC::$server->getAppConfig(),
-				\OC::$server->getDatabaseConnection()
+				\OC::$server->getDatabaseConnection(),
+				\OC::$server->getGlobalStoragesService()
 			);
 		});
 
