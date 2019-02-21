@@ -21,14 +21,18 @@
 
 namespace OCA\ConfigReport\Tests;
 
+use OC\Files\External\StorageConfig;
 use OC\IntegrityCheck\Checker;
 use OC\SystemConfig;
 use OC\User\Manager;
 use OCA\ConfigReport\ReportDataCollector;
+use OCP\Files\External\Auth\AuthMechanism;
+use OCP\Files\External\Backend\Backend;
 use OCP\IAppConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use Test\TestCase;
+use OCP\Files\External\Service\IGlobalStoragesService;
 
 /**
  * Class ReportDataCollectorTest
@@ -49,6 +53,8 @@ class ReportDataCollectorTest extends TestCase {
 	private $appConfig;
 	/** @var IDBConnection */
 	private $connection;
+	/** @var IGlobalStoragesService */
+	private $globalStoragesService;
 	/** @var ReportDataCollector */
 	private $reportDataCollector;
 
@@ -62,11 +68,12 @@ class ReportDataCollectorTest extends TestCase {
 		$this->sysConfig = $this->createMock(SystemConfig::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->connection = \OC::$server->getDatabaseConnection();
+		$this->globalStoragesService = $this->createMock(IGlobalStoragesService::class);
 
 		$this->reportDataCollector = new ReportDataCollector($this->integrityChecker,
 				$this->userManager, $this->groupManager, [], "1.0",
 				'1', 'foo', $this->sysConfig, $this->appConfig,
-				$this->connection);
+				$this->connection, $this->globalStoragesService);
 	}
 
 	protected function tearDown() {
@@ -633,6 +640,101 @@ class ReportDataCollectorTest extends TestCase {
 			$this->asserttrue(isset($result['tableNames']['oc_accounts']));
 			$this->assertEquals($expectedResult['oc_accounts'], $result['tableNames']['oc_accounts'], "", 0.0, 10, true);
 			$this->assertEquals($expectedResult['oc_groups'], $result['tableNames']['oc_groups'], '', 0.0, 10, true);
+		}
+	}
+
+	/**
+	 * @return \OCP\Files\External\Auth\AuthMechanism
+	 */
+	protected function getAuthMechMock($scheme = null) {
+		$authMech = $this->createMock(AuthMechanism::class);
+		/*$authMech = $this->getMockBuilder('\OCP\Files\External\Auth\AuthMechanism')
+			->disableOriginalConstructor()
+			->getMock();*/
+		$authMech->method('getScheme')
+			->willReturn($scheme);
+		$authMech->method('getIdentifier')
+			->willReturn('identifier:'. AuthMechanism::class);
+
+		return $authMech;
+	}
+
+	public function testMountsArray() {
+		$sftpStorageConfig = new StorageConfig(1);
+		$owncloudStorageConfig = new StorageConfig(2);
+
+		$sftpStorageConfig->setBackendOptions([
+			'host' => 'localhost',
+			'root' => '/test',
+			'user' => 'foo',
+			'password' => 'hello'
+		]);
+		$sftpStorageConfig->setApplicableUsers(['foo', 'bar']);
+		$sftpStorageConfig->setMountPoint('/MySFTP1');
+
+		$authMechanism = $this->getAuthMechMock();
+		$sftpStorageConfig->setAuthMechanism($authMechanism);
+		$backend = $this->createMock(Backend::class);
+		$backend->method('getText')
+			->willReturn('\OCA\Files_External\Lib\Storage\SFTP');
+		$sftpStorageConfig->setBackend($backend);
+
+		$owncloudStorageConfig->setBackendOptions([
+			'host' => 'http:/localhost/test',
+			'root' => '',
+			'secure' => false,
+			'user' => 'foo',
+			'password' => 'hello',
+		]);
+		$owncloudStorageConfig->setMountPoint('/ownCloud');
+		$owncloudStorageConfig->setApplicableUsers(['']);
+		$owncloudStorageConfig->setAuthMechanism($authMechanism);
+		$backendOc = $this->createMock(Backend::class);
+		$backendOc->method('getText')
+			->willReturn('\OCA\Files_External\Lib\Storage\OwnCloud');
+		$owncloudStorageConfig->setBackend($backendOc);
+
+		$this->globalStoragesService->method('getStorageForAllUsers')
+			->willReturn([$owncloudStorageConfig, $sftpStorageConfig]);
+		$results = $this->invokePrivate($this->reportDataCollector, 'getMountsArray', []);
+		foreach ($results as $result) {
+			if ($result['mount_point'] === '/ownCloud') {
+				$expectedResult = [
+					'id' => 2,
+					'mount_point' => '/ownCloud',
+					'storage' => '\OCA\Files_External\Lib\Storage\OwnCloud',
+					'authentication_type' => null,
+					'configuration' => [
+						'host' => 'http:/localhost/test',
+						'root' => null,
+						'secure' => null,
+						'user' => 'foo',
+						'password' => '***REMOVED SENSITIVE VALUE***'
+					],
+					'options' => ['enable_sharing' => null],
+					'applicable_users' => 'All',
+					'applicable_groups' => '',
+					'type' => 'Personal'
+				];
+			} else {
+				$expectedResult = [
+					'id' => 1,
+					'mount_point' => '/MySFTP1',
+					'storage' => '\OCA\Files_External\Lib\Storage\SFTP',
+					'authentication_type' => null,
+					'configuration' => [
+						'host' => 'localhost',
+						'root' => '/test',
+						'user' => 'foo',
+						'password' => '***REMOVED SENSITIVE VALUE***'
+					],
+					'options' => ['enable_sharing' => null],
+					'applicable_users' => 'foo, bar',
+					'applicable_groups' => '',
+					'type' => 'Personal'
+				];
+			}
+			$this->assertEquals($expectedResult, $result);
 		}
 	}
 }
