@@ -41,15 +41,15 @@ use OCP\Files\External\Service\IGlobalStoragesService;
  * @package OCA\ConfigReport\Tests
  */
 class ReportDataCollectorTest extends TestCase {
-	/** @var Checker | PHPUnit_Framework_MockObject_MockObject */
+	/** @var Checker | PHPUnit\Framework\MockObject\MockObject */
 	private $integrityChecker;
-	/** @var Manager | PHPUnit_Framework_MockObject_MockObject */
+	/** @var Manager | PHPUnit\Framework\MockObject\MockObject */
 	private $userManager;
-	/** @var IGroupManager | PHPUnit_Framework_MockObject_MockObject */
+	/** @var IGroupManager | PHPUnit\Framework\MockObject\MockObject */
 	private $groupManager;
-	/** @var SystemConfig | PHPUnit_Framework_MockObject_MockObject */
+	/** @var SystemConfig | PHPUnit\Framework\MockObject\MockObject */
 	private $sysConfig;
-	/** @var IAppConfig | PHPUnit_Framework_MockObject_MockObject */
+	/** @var IAppConfig | PHPUnit\Framework\MockObject\MockObject */
 	private $appConfig;
 	/** @var IDBConnection */
 	private $connection;
