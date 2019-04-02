@@ -2,6 +2,7 @@
 <phpunit bootstrap="tests/unit/bootstrap.php"
 		 verbose="true"
 		 strict="true"
+		 failOnRisky="true"
 		 failOnWarning="true"
 		 timeoutForSmallTests="900"
 		 timeoutForMediumTests="900"
