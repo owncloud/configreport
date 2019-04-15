@@ -203,6 +203,9 @@ class ReportDataCollector {
 		$mountsArray = [];
 
 		foreach ($mounts as $mount) {
+			if ($mount->getType() === IStorageConfig::MOUNT_TYPE_PERSONAl) {
+				continue;
+			}
 			$applicableUsers = \implode(', ', $mount->getApplicableUsers());
 			$applicableGroups = \implode(', ', $mount->getApplicableGroups());
 
