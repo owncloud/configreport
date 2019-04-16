@@ -662,6 +662,8 @@ class ReportDataCollectorTest extends TestCase {
 	public function testMountsArray() {
 		$sftpStorageConfig = new StorageConfig(1);
 		$owncloudStorageConfig = new StorageConfig(2);
+		$personalStorageConfig = new StorageConfig(3);
+		$personalStorageConfig1 = new StorageConfig(4);
 
 		$sftpStorageConfig->setBackendOptions([
 			'host' => 'localhost',
@@ -694,9 +696,45 @@ class ReportDataCollectorTest extends TestCase {
 			->willReturn('\OCA\Files_External\Lib\Storage\OwnCloud');
 		$owncloudStorageConfig->setBackend($backendOc);
 
+		$personalStorageConfig->setBackendOptions([
+			'host' => 'localhost',
+			'root' => '/personal',
+			'user' => 'foobar',
+			'password' => 'hello'
+		]);
+		$personalStorageConfig->setApplicableUsers([]);
+		$personalStorageConfig->setMountPoint('/MyPersonalSFTPMount');
+
+		$personalStorageConfig->setAuthMechanism($authMechanism);
+		$personalStorageConfig->setType(2);
+		$backend = $this->createMock(Backend::class);
+		$backend->method('getText')
+			->willReturn('\OCA\Files_External\Lib\Storage\SFTP');
+		$personalStorageConfig->setBackend($backend);
+
+		$personalStorageConfig1->setBackendOptions([
+			'host' => 'localhost',
+			'root' => '/personal2',
+			'user' => 'foobar',
+			'password' => 'hello'
+		]);
+		$personalStorageConfig1->setApplicableUsers(['foo', 'bar']);
+		$personalStorageConfig1->setMountPoint('/MyPersonalOcMount');
+
+		$personalStorageConfig1->setAuthMechanism($authMechanism);
+		$personalStorageConfig1->setType(2);
+		$backendOc = $this->createMock(Backend::class);
+		$backendOc->method('getText')
+			->willReturn('\OCA\Files_External\Lib\Storage\OwnCloud');
+		$personalStorageConfig1->setBackend($backendOc);
+
 		$this->globalStoragesService->method('getStorageForAllUsers')
 			->willReturn([$owncloudStorageConfig, $sftpStorageConfig]);
 		$results = $this->invokePrivate($this->reportDataCollector, 'getMountsArray', []);
+
+		//Personal mount is excluded.
+		$this->assertCount(2, $results);
+
 		foreach ($results as $result) {
 			if ($result['mount_point'] === '/ownCloud') {
 				$expectedResult = [
