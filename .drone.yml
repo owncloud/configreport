@@ -2,7 +2,6 @@ workspace:
   base: /var/www/owncloud
   path: apps/configreport
 
-branches: [master, release*]
 
 pipeline:
   install-core:
