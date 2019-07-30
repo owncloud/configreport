@@ -2,7 +2,6 @@ workspace:
   base: /var/www/owncloud
   path: apps/configreport
 
-
 pipeline:
   install-core:
     image: owncloudci/core
@@ -171,7 +170,6 @@ matrix:
       TEST_SUITE: owncloud-coding-standard
 
     # unit tests
-    # master
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
       TEST_SUITE: phpunit
@@ -209,14 +207,13 @@ matrix:
       TEST_SUITE: phpunit
       NEED_CORE: true
 
-    # stable10
     - PHP_VERSION: 7.0
-      OC_VERSION: daily-stable10-qa
+      OC_VERSION: daily-master-qa
       TEST_SUITE: phpunit
       NEED_CORE: true
 
     - PHP_VERSION: 7.0
-      OC_VERSION: daily-stable10-qa
+      OC_VERSION: daily-master-qa
       TEST_SUITE: phpunit
       NEED_CORE: true
       DB_HOST: oci
@@ -224,7 +221,7 @@ matrix:
       DB_NAME: XE
 
     - PHP_VERSION: 7.0
-      OC_VERSION: daily-stable10-qa
+      OC_VERSION: daily-master-qa
       TEST_SUITE: phpunit
       NEED_CORE: true
       DB_HOST: pgsql
@@ -232,7 +229,7 @@ matrix:
       DB_NAME: owncloud
 
     - PHP_VERSION: 7.0
-      OC_VERSION: daily-stable10-qa
+      OC_VERSION: daily-master-qa
       TEST_SUITE: phpunit
       NEED_CORE: true
       DB_HOST: mysql
@@ -240,23 +237,12 @@ matrix:
       DB_NAME: owncloud
 
     - PHP_VERSION: 7.0
-      OC_VERSION: daily-stable10-qa
+      OC_VERSION: daily-master-qa
       TEST_SUITE: phpunit
       NEED_CORE: true
       DB_HOST: mysqlmb4
       DB_TYPE: mysql
       DB_NAME: owncloud
-
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: phpunit
-      NEED_CORE: true
-      COVERAGE: true
-
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: phpunit
-      NEED_CORE: true
 
     # acceptance tests
     # master
@@ -284,29 +270,6 @@ matrix:
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiConfigReport
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      DB_HOST: mysql
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-
-    # stable10
-    - PHP_VERSION: 7.0
-      OC_VERSION: daily-stable10-qa
-      TEST_SUITE: api-acceptance
-      BEHAT_SUITE: apiConfigReport
-      NEED_CORE: true
-      NEED_SERVER: true
-      NEED_INSTALL_APP: true
-      DB_HOST: oci
-      DB_TYPE: oci
-      DB_NAME: XE
-
-    - PHP_VERSION: 7.0
-      OC_VERSION: daily-stable10-qa
       TEST_SUITE: api-acceptance
       BEHAT_SUITE: apiConfigReport
       NEED_CORE: true
