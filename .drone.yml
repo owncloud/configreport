@@ -1245,7 +1245,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiConfigReport-10.2.1-mariadb10.2-php7.0
+name: apiConfigReport-latest-mariadb10.2-php7.0
 
 platform:
   os: linux
@@ -1267,7 +1267,7 @@ steps:
     db_type: mysql
     db_username: owncloud
     exclude: apps/configreport
-    version: 10.2.1
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -1353,7 +1353,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiConfigReport-10.2.1-postgres9.4-php7.0
+name: apiConfigReport-latest-postgres9.4-php7.0
 
 platform:
   os: linux
@@ -1375,7 +1375,7 @@ steps:
     db_type: pgsql
     db_username: owncloud
     exclude: apps/configreport
-    version: 10.2.1
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -1460,7 +1460,7 @@ depends_on:
 ---
 kind: pipeline
 type: docker
-name: apiConfigReport-10.2.1-oracle-php7.0
+name: apiConfigReport-latest-oracle-php7.0
 
 platform:
   os: linux
@@ -1482,7 +1482,7 @@ steps:
     db_type: oci
     db_username: system
     exclude: apps/configreport
-    version: 10.2.1
+    version: latest
 
 - name: install-testrunner
   pull: always
@@ -1607,8 +1607,8 @@ depends_on:
 - apiConfigReport-master-mariadb10.2-php7.0
 - apiConfigReport-master-postgres9.4-php7.0
 - apiConfigReport-master-oracle-php7.0
-- apiConfigReport-10.2.1-mariadb10.2-php7.0
-- apiConfigReport-10.2.1-postgres9.4-php7.0
-- apiConfigReport-10.2.1-oracle-php7.0
+- apiConfigReport-latest-mariadb10.2-php7.0
+- apiConfigReport-latest-postgres9.4-php7.0
+- apiConfigReport-latest-oracle-php7.0
 
 ...
