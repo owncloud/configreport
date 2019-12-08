@@ -58,7 +58,7 @@ class ReportDataCollectorTest extends TestCase {
 	/** @var ReportDataCollector */
 	private $reportDataCollector;
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->integrityChecker = $this->createMock(Checker::class);
@@ -76,7 +76,7 @@ class ReportDataCollectorTest extends TestCase {
 				$this->connection, $this->globalStoragesService);
 	}
 
-	protected function tearDown() {
+	protected function tearDown(): void {
 		$this->restoreService('IntegrityCodeChecker');
 		parent::tearDown();
 	}

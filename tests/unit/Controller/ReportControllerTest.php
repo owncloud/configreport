@@ -43,7 +43,7 @@ class ReportControllerTest extends TestCase {
 	/** @var ReportDataCollector */
 	private $reportDataCollector;
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 		$this->config = $this->getMockBuilder(IConfig::class)
 			->disableOriginalConstructor()

@@ -5,7 +5,7 @@ namespace OCA\ConfigReport\Http;
 use Test\TestCase;
 
 class ReportResponseTest extends TestCase {
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 	}
 
