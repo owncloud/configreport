@@ -634,12 +634,12 @@ class ReportDataCollectorTest extends TestCase {
 
 		if ($dbtype === 'oci') {
 			$this->asserttrue(isset($result['tableNames']["\"oc_accounts\""]));
-			$this->assertEquals($expectedResult['oc_accounts'], $result['tableNames']["\"oc_accounts\""], "", 0.0, 10, true);
-			$this->assertEquals($expectedResult['oc_groups'], $result['tableNames']["\"oc_groups\""], '', 0.0, 10, true);
+			$this->assertEqualsCanonicalizing($expectedResult['oc_accounts'], $result['tableNames']["\"oc_accounts\""]);
+			$this->assertEqualsCanonicalizing($expectedResult['oc_groups'], $result['tableNames']["\"oc_groups\""]);
 		} else {
 			$this->asserttrue(isset($result['tableNames']['oc_accounts']));
-			$this->assertEquals($expectedResult['oc_accounts'], $result['tableNames']['oc_accounts'], "", 0.0, 10, true);
-			$this->assertEquals($expectedResult['oc_groups'], $result['tableNames']['oc_groups'], '', 0.0, 10, true);
+			$this->assertEqualsCanonicalizing($expectedResult['oc_accounts'], $result['tableNames']['oc_accounts']);
+			$this->assertEqualsCanonicalizing($expectedResult['oc_groups'], $result['tableNames']['oc_groups']);
 		}
 	}
 
