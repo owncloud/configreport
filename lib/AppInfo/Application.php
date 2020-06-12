@@ -17,10 +17,9 @@ class Application extends App {
 	/**
 	 * Application constructor.
 	 *
-	 * @param string $appName
 	 * @param array $urlParams
 	 */
-	public function __construct($appName, array $urlParams = []) {
+	public function __construct(array $urlParams = []) {
 		parent::__construct('configreport', $urlParams);
 		$this->registerServices();
 	}
