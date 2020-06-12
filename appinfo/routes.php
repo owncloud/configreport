@@ -23,7 +23,7 @@ namespace OCA\ConfigReport\AppInfo;
 
 use OCP\AppFramework\App;
 
-$application = new Application('configreport');
+$application = new Application();
 
 $application->registerRoutes(
 	$this,

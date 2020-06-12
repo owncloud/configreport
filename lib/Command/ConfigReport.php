@@ -68,5 +68,6 @@ class ConfigReport extends Command {
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$report = $this->reportDataCollector->getReportJson();
 		$output->writeln($report);
+		return 0;
 	}
 }

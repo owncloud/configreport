@@ -79,7 +79,7 @@ class ReportDataCollector {
 	private $systemConfig;
 
 	/**
-	 * @var array
+	 * @var object
 	 */
 	private $appConfigData;
 
@@ -142,7 +142,8 @@ class ReportDataCollector {
 		$this->globalStoragesService = $globalStoragesService;
 
 		$event = new GenericEvent();
-		$this->appConfigData = \OC::$server->getEventDispatcher()->dispatch('OCA\ConfigReport::loadData', $event);
+		/* @phpstan-ignore-next-line */
+		$this->appConfigData = \OC::$server->getEventDispatcher()->dispatch($event, 'OCA\ConfigReport::loadData');
 	}
 
 	/**
@@ -355,6 +356,7 @@ class ReportDataCollector {
 	private function getOcMigrationArray() {
 		//Get data from oc_migrations table
 		$queryBuilder = $this->connection->getQueryBuilder();
+		/* @phpstan-ignore-next-line */
 		$results = $queryBuilder
 			->select('app', 'version')
 			->from('migrations')
@@ -370,6 +372,7 @@ class ReportDataCollector {
 	private function getOCTablesArray() {
 		$ocTables = [];
 		//Get tables structure/description/schema from owncloud db
+		/* @phpstan-ignore-next-line */
 		$schemaManager = $this->connection->getSchemaManager();
 		$tableNames = $schemaManager->listTableNames();
 		foreach ($tableNames as $tableName) {
