@@ -372,7 +372,7 @@ class ReportDataCollector {
 	private function getOCTablesArray() {
 		$ocTables = [];
 		//Get tables structure/description/schema from owncloud db
-		/* @phpstan-ignore-next-line */
+		/* @phpstan-ignore-next-line @phan-suppress-next-line PhanUndeclaredMethod */
 		$schemaManager = $this->connection->getSchemaManager();
 		$tableNames = $schemaManager->listTableNames();
 		foreach ($tableNames as $tableName) {
