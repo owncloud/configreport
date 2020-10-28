@@ -35,7 +35,9 @@ class Application extends App {
 				\OC_Util::getVersion(),
 				\OC_Util::getVersionString(),
 				\OC_Util::getEditionString(),
+				/* @phan-suppress-next-line PhanDeprecatedFunction */
 				\OCP\User::getDisplayName(),
+				/* @phan-suppress-next-line PhanAccessMethodInternal */
 				\OC::$server->getSystemConfig(),
 				\OC::$server->getAppConfig(),
 				\OC::$server->getDatabaseConnection(),

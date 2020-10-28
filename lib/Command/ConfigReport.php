@@ -20,10 +20,7 @@ namespace OCA\ConfigReport\Command;
 
 use OCA\ConfigReport\ReportDataCollector;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -49,7 +46,9 @@ class ConfigReport extends Command {
 			\OC_Util::getVersion(),
 			\OC_Util::getVersionString(),
 			\OC_Util::getEditionString(),
+			/* @phan-suppress-next-line PhanDeprecatedFunction */
 			\OCP\User::getDisplayName(),
+			/* @phan-suppress-next-line PhanAccessMethodInternal */
 			\OC::$server->getSystemConfig(),
 			\OC::$server->getAppConfig(),
 			\OC::$server->getDatabaseConnection(),
