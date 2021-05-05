@@ -356,7 +356,7 @@ class ReportDataCollector {
 	private function getOcMigrationArray() {
 		//Get data from oc_migrations table
 		$queryBuilder = $this->connection->getQueryBuilder();
-		/* @phpstan-ignore-next-line */
+		/* @phpstan-ignore-next-line @phan-suppress-next-line PhanDeprecatedFunction */
 		$results = $queryBuilder
 			->select('app', 'version')
 			->from('migrations')
