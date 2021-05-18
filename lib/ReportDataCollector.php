@@ -50,6 +50,11 @@ class ReportDataCollector {
 	private $groupManager;
 
 	/**
+	 * @var UserTypeHelper
+	 */
+	private $userTypeHelper;
+
+	/**
 	 * @var string
 	 */
 	private $licenseKey;
