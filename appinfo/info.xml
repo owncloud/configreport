@@ -12,7 +12,7 @@
 		<filesystem/>
 	</types>
 	<dependencies>
-		<owncloud min-version="10.7" max-version="11" />
+		<owncloud min-version="10.8" max-version="11" />
 	</dependencies>
 	<default_enable/>
 	<commands>
