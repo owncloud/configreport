@@ -2,6 +2,7 @@
 
 namespace OCA\ConfigReport\AppInfo;
 
+use OC\Helper\UserTypeHelper;
 use OCA\ConfigReport\Controller\ReportController;
 use OCA\ConfigReport\ReportDataCollector;
 use \OCP\AppFramework\App;
@@ -31,6 +32,7 @@ class Application extends App {
 			return new ReportDataCollector(
 				\OC::$server->getIntegrityCodeChecker(),
 				\OC::$server->getUserManager(),
+				new UserTypeHelper(),
 				\OC::$server->getGroupManager(),
 				\OC_Util::getVersion(),
 				\OC_Util::getVersionString(),
