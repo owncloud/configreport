@@ -754,7 +754,7 @@ def acceptance(ctx):
 	errorFound = False
 
 	default = {
-		'servers': ['daily-master-qa', 'latest'],
+		'servers': ['daily-master-qa'],
 		'browsers': ['chrome'],
 		'phpVersions': ['7.2'],
 		'databases': ['mariadb:10.2'],

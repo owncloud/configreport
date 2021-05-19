@@ -17,6 +17,7 @@
  */
 
 namespace OCA\ConfigReport;
+use OC\Helper\UserTypeHelper;
 use OC\IntegrityCheck\Checker;
 use OC\SystemConfig;
 use OC\User\Manager;
@@ -47,6 +48,11 @@ class ReportDataCollector {
 	 * @var IGroupManager
 	 */
 	private $groupManager;
+
+	/**
+	 * @var UserTypeHelper
+	 */
+	private $userTypeHelper;
 
 	/**
 	 * @var string
@@ -102,6 +108,7 @@ class ReportDataCollector {
 	/**
 	 * @param Checker $integrityChecker
 	 * @param Manager $userManager
+	 * @param UserTypeHelper $userTypeHelper
 	 * @param IGroupManager $groupManager
 	 * @param array $version
 	 * @param string $versionString
@@ -115,6 +122,7 @@ class ReportDataCollector {
 	public function __construct(
 		Checker $integrityChecker,
 		Manager $userManager,
+		UserTypeHelper $userTypeHelper,
 		IGroupManager $groupManager,
 		array $version,
 		$versionString,
@@ -127,6 +135,7 @@ class ReportDataCollector {
 	) {
 		$this->integrityChecker = $integrityChecker;
 		$this->userManager = $userManager;
+		$this->userTypeHelper = $userTypeHelper;
 		$this->groupManager = $groupManager;
 		$this->licenseKey = \OCP\IConfig::SENSITIVE_VALUE;
 
@@ -271,9 +280,14 @@ class ReportDataCollector {
 		$users = [];
 		$this->userManager->callForAllUsers(function (IUser $user) use (&$users) {
 			if (!isset($users[$user->getBackendClassName()])) {
-				$users[$user->getBackendClassName()] = ['count' => 0, 'seen' => 0, 'logged in (30 days)' => 0];
+				$users[$user->getBackendClassName()] = ['total_count' => 0, 'guest_count' => 0, 'seen' => 0, 'logged in (30 days)' => 0];
 			}
-			$users[$user->getBackendClassName()]['count']++;
+			$users[$user->getBackendClassName()]['total_count']++;
+
+			if ($this->userTypeHelper->isGuestUser($user->getUID()) === true) {
+				$users[$user->getBackendClassName()]['guest_count']++;
+			}
+
 			if ($user->getLastLogin() > 0) {
 				$users[$user->getBackendClassName()]['seen']++;
 				if ($user->getLastLogin() > \strtotime('-30 days')) {

@@ -22,6 +22,7 @@
 namespace OCA\ConfigReport\Tests;
 
 use OC\Files\External\StorageConfig;
+use OC\Helper\UserTypeHelper;
 use OC\IntegrityCheck\Checker;
 use OC\SystemConfig;
 use OC\User\Manager;
@@ -45,6 +46,8 @@ class ReportDataCollectorTest extends TestCase {
 	private $integrityChecker;
 	/** @var Manager | PHPUnit\Framework\MockObject\MockObject */
 	private $userManager;
+	/** @var UserTypeHelper | PHPUnit\Framework\MockObject\MockObject */
+	private $userTypeHelper;
 	/** @var IGroupManager | PHPUnit\Framework\MockObject\MockObject */
 	private $groupManager;
 	/** @var SystemConfig | PHPUnit\Framework\MockObject\MockObject */
@@ -64,6 +67,7 @@ class ReportDataCollectorTest extends TestCase {
 		$this->integrityChecker = $this->createMock(Checker::class);
 		$this->overwriteService('IntegrityCodeChecker', $this->integrityChecker);
 		$this->userManager = $this->createMock(Manager::class);
+		$this->userTypeHelper = $this->createMock(UserTypeHelper::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->sysConfig = $this->createMock(SystemConfig::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
@@ -71,7 +75,7 @@ class ReportDataCollectorTest extends TestCase {
 		$this->globalStoragesService = $this->createMock(IGlobalStoragesService::class);
 
 		$this->reportDataCollector = new ReportDataCollector($this->integrityChecker,
-				$this->userManager, $this->groupManager, [], "1.0",
+				$this->userManager,$this->userTypeHelper, $this->groupManager, [], "1.0",
 				'1', 'foo', $this->sysConfig, $this->appConfig,
 				$this->connection, $this->globalStoragesService);
 	}

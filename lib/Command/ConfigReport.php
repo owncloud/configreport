@@ -18,6 +18,7 @@
 
 namespace OCA\ConfigReport\Command;
 
+use OC\Helper\UserTypeHelper;
 use OCA\ConfigReport\ReportDataCollector;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -42,6 +43,7 @@ class ConfigReport extends Command {
 		$this->reportDataCollector = new ReportDataCollector(
 			\OC::$server->getIntegrityCodeChecker(),
 			\OC::$server->getUserManager(),
+			new UserTypeHelper(),
 			\OC::$server->getGroupManager(),
 			\OC_Util::getVersion(),
 			\OC_Util::getVersionString(),
