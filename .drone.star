@@ -52,12 +52,15 @@ config = {
 				'postgres:9.4',
 				'oracle',
 			],
+			'servers': [
+				'daily-master-qa',
+			],
 		},
 	}
 }
 
 def main(ctx):
-	
+
 	before = beforePipelines()
 
 	coverageTests = coveragePipelines(ctx)
@@ -807,7 +810,7 @@ def acceptance(ctx):
 				suites[suite] = suite
 		else:
 			suites = matrix['suites']
-		
+
 		if 'debugSuites' in matrix and len(matrix['debugSuites']) != 0:
 			if type(matrix['debugSuites']) == "list":
 				suites = {}
