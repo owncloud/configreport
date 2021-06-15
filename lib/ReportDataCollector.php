@@ -455,7 +455,8 @@ class ReportDataCollector {
 				'<tr><td>PHP Credits Egg</td><td>$1</td></tr>',
 				'<tr><td>Zend Engine</td><td>$2</td></tr>' . "\n" .
 				'<tr><td>Zend Egg</td><td>$1</td></tr>', ' ', '%S%', '%E%'],
-			\ob_get_clean());
+			\ob_get_clean()
+		);
 
 		$sections = \explode('<h2>', \strip_tags($phpinfo, '<h2><th><td>'));
 		unset($sections[0]);
@@ -469,7 +470,10 @@ class ReportDataCollector {
 			}
 			\preg_match_all(
 				'#%S%(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?%E%#',
-				$section, $matches, PREG_SET_ORDER);
+				$section,
+				$matches,
+				PREG_SET_ORDER
+			);
 			foreach ($matches as $match) {
 				if (isset($sensitiveServerConfigs[$match[1]])) {
 					continue;
