@@ -74,10 +74,20 @@ class ReportDataCollectorTest extends TestCase {
 		$this->connection = \OC::$server->getDatabaseConnection();
 		$this->globalStoragesService = $this->createMock(IGlobalStoragesService::class);
 
-		$this->reportDataCollector = new ReportDataCollector($this->integrityChecker,
-				$this->userManager,$this->userTypeHelper, $this->groupManager, [], "1.0",
-				'1', 'foo', $this->sysConfig, $this->appConfig,
-				$this->connection, $this->globalStoragesService);
+		$this->reportDataCollector = new ReportDataCollector(
+			$this->integrityChecker,
+			$this->userManager,
+			$this->userTypeHelper,
+			$this->groupManager,
+			[],
+			"1.0",
+			'1',
+			'foo',
+			$this->sysConfig,
+			$this->appConfig,
+			$this->connection,
+			$this->globalStoragesService
+		);
 	}
 
 	protected function tearDown(): void {
@@ -99,14 +109,16 @@ class ReportDataCollectorTest extends TestCase {
 			$this->assertArrayHasKey('app', $result);
 			$this->assertArrayHasKey('version', $result);
 			$this->assertContains($values[0], $coreApps);
-			$this->assertContains($values[1],
+			$this->assertContains(
+				$values[1],
 				['20170101010100', '20170101215145', '20170111103310', '20170213215145', '20170214112458', '20170221114437',
 				'20170221121536', '20170315173825', '20170320173955', '20170418154659', '20170516100103', '20170526104128',
 				'20170605143658', '20170711191432', '20170804201253', '20170928120000', '20171026130750', '20180123131835',
 				'20180302155233', '20180319102121', '20180607072706', '20170116150538', '20170116170538', '20170202213905',
 				'20170202220512', '20170427182800', '20170519091921', '20170526100342', '20170711193427', '20170927201245',
 				'20170804201125', '20170804201253', '20170814051424', '20170804201125', '20170804201253', '20170830112305',
-				'20171115154900', '20171215103657', '20170804201125', '20180622095921']);
+				'20171115154900', '20171215103657', '20170804201125', '20180622095921']
+			);
 		}
 	}
 
