@@ -44,9 +44,6 @@ config = {
                 "postgres:9.4",
                 "oracle",
             ],
-            "servers": [
-                "daily-master-qa",
-            ],
         },
     },
 }
