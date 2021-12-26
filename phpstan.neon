@@ -2,6 +2,9 @@ parameters:
   inferPrivatePropertyTypeFromConstructor: true
   bootstrapFiles:
     - %currentWorkingDirectory%/../../lib/base.php
-  excludes_analyse:
+  excludePaths:
     - %currentWorkingDirectory%/appinfo/routes.php
   ignoreErrors:
+    -
+      message: '#Property OCA\\ConfigReport\\Controller\\ReportController::\$config is never read, only written.#'
+      path: lib/Controller/ReportController.php
