@@ -99,11 +99,20 @@ class ReportDataCollector {
 	 */
 	private $appConfig;
 
-	/** @var IDBConnection */
+	/**
+	 * @var IDBConnection
+	 */
 	private $connection;
 
-	/** @var IGlobalStoragesService */
+	/**
+	 * @var IGlobalStoragesService
+	 */
 	private $globalStoragesService;
+	
+	/**
+	 * @var array
+	 */
+	private $obscuredkeys;
 
 	/**
 	 * @param Checker $integrityChecker
@@ -153,6 +162,10 @@ class ReportDataCollector {
 		$event = new GenericEvent();
 		/* @phpstan-ignore-next-line */
 		$this->appConfigData = \OC::$server->getEventDispatcher()->dispatch($event, 'OCA\ConfigReport::loadData');
+		$this->obscuredkeys = [
+			'server_user',
+			'wopi.token.key',
+		];
 	}
 
 	/**
@@ -321,7 +334,7 @@ class ReportDataCollector {
 			$result[$key] = $this->systemConfig->getFilteredValue($key);
 		}
 
-		return $result;
+		return $this->sanitizeValues($result);
 	}
 
 	/**
@@ -336,7 +349,7 @@ class ReportDataCollector {
 			if (\stripos($key, 'password') !== false) {
 				$values[$key] = \OCP\IConfig::SENSITIVE_VALUE;
 			}
-			if ($key === 'server_user') {
+			if (\in_array($key, $this->obscuredkeys)) {
 				$values[$key] = \OCP\IConfig::SENSITIVE_VALUE;
 			}
 		}
