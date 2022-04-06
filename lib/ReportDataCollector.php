@@ -227,6 +227,10 @@ class ReportDataCollector {
 			if (isset($configuration['password'])) {
 				$configuration['password'] = \OCP\IConfig::SENSITIVE_VALUE;
 			}
+			if (isset($configuration['server_user'])) {
+				$configuration['server_user'] = \OCP\IConfig::SENSITIVE_VALUE;
+			}
+
 			$mountsArray[] = [
 				'id' => $mount->getId(),
 				'mount_point' => $mount->getMountPoint(),
@@ -334,6 +338,9 @@ class ReportDataCollector {
 	private function sanitizeValues($values) {
 		foreach ($values as $key => $value) {
 			if (\stripos($key, 'password') !== false) {
+				$values[$key] = \OCP\IConfig::SENSITIVE_VALUE;
+			}
+			if ($key === 'server_user') {
 				$values[$key] = \OCP\IConfig::SENSITIVE_VALUE;
 			}
 		}
