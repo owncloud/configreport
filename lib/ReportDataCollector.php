@@ -336,6 +336,9 @@ class ReportDataCollector {
 			if (\stripos($key, 'password') !== false) {
 				$values[$key] = \OCP\IConfig::SENSITIVE_VALUE;
 			}
+			if ($key === 'server_user') {
+				$values[$key] = \OCP\IConfig::SENSITIVE_VALUE;
+			}
 		}
 		return $values;
 	}
