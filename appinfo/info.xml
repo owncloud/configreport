@@ -21,4 +21,5 @@
 	<settings>
 		<admin>OCA\ConfigReport\AdminPanel</admin>
 	</settings>
+	<category>tools</category>
 </info>
