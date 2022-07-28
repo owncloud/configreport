@@ -20,8 +20,6 @@
 
 namespace OCA\ConfigReport\Controller;
 
-use OC\Http\Client\Response;
-use OCA\Activity\Data;
 use OCA\ConfigReport\Http\ReportResponse;
 use OCA\ConfigReport\ReportDataCollector;
 use OCP\AppFramework\Controller;
