@@ -4,7 +4,3 @@ parameters:
     - %currentWorkingDirectory%/../../lib/base.php
   excludePaths:
     - %currentWorkingDirectory%/appinfo/routes.php
-  ignoreErrors:
-    -
-      message: '#Property OCA\\ConfigReport\\Controller\\ReportController::\$config is never read, only written.#'
-      path: lib/Controller/ReportController.php
