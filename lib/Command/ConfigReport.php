@@ -94,7 +94,7 @@ class ConfigReport extends Command {
 			'content' => \http_build_query(['token' => $token])
 		]];
 
-		$data =  \file_get_contents($url,false, \stream_context_create($opts));
+		$data =  \file_get_contents($url, false, \stream_context_create($opts));
 		$cfg->deleteAppValue('configreport', 'token');
 
 		return $data;
