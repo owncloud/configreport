@@ -89,7 +89,12 @@ class ConfigReport extends Command {
 		$urlGen = \OC::$server->getURLGenerator();
 		$url = $urlGen->linkToRouteAbsolute('configreport.Report.fromCli');
 
-		$data =  \file_get_contents($url . "?token=$token");
+		$opts = ['http' => [
+			'method'  => 'POST',
+			'content' => \http_build_query(['token' => $token])
+		]];
+
+		$data =  \file_get_contents($url,false, \stream_context_create($opts));
 		$cfg->deleteAppValue('configreport', 'token');
 
 		return $data;

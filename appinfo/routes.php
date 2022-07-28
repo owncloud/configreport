@@ -37,7 +37,7 @@ $application->registerRoutes(
 			[
 				'name' => 'Report#fromCli',
 				'url' => '/cli',
-				'verb' => 'GET',
+				'verb' => 'POST',
 			]
 		],
 	]
