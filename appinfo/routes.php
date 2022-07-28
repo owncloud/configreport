@@ -34,6 +34,11 @@ $application->registerRoutes(
 				'url' => '/report',
 				'verb' => 'GET',
 			],
+			[
+				'name' => 'Report#fromCli',
+				'url' => '/cli',
+				'verb' => 'GET',
+			]
 		],
 	]
 );
