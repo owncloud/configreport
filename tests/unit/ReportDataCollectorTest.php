@@ -29,6 +29,7 @@ use OC\User\Manager;
 use OCA\ConfigReport\ReportDataCollector;
 use OCP\Files\External\Auth\AuthMechanism;
 use OCP\Files\External\Backend\Backend;
+use OCP\Files\External\DefinitionParameter;
 use OCP\IAppConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
@@ -685,16 +686,21 @@ class ReportDataCollectorTest extends TestCase {
 			'host' => 'localhost',
 			'root' => '/test',
 			'user' => 'foo',
-			'password' => 'hello'
+			'password' => 'helloo'
 		]);
 		$sftpStorageConfig->setApplicableUsers(['foo', 'bar']);
 		$sftpStorageConfig->setMountPoint('/MySFTP1');
 
 		$authMechanism = $this->getAuthMechMock();
 		$sftpStorageConfig->setAuthMechanism($authMechanism);
+
+		$definitionParameter = $this->createMock(DefinitionParameter::class);
+		$definitionParameter->method('getName')->willReturn('password');
+		$definitionParameter->method('getType')->willReturn(DefinitionParameter::VALUE_PASSWORD);
 		$backend = $this->createMock(Backend::class);
 		$backend->method('getText')
 			->willReturn('\OCA\Files_External\Lib\Storage\SFTP');
+		$backend->method('getParameters')->willReturn(['password' => $definitionParameter]);
 		$sftpStorageConfig->setBackend($backend);
 
 		$owncloudStorageConfig->setBackendOptions([
@@ -702,27 +708,37 @@ class ReportDataCollectorTest extends TestCase {
 			'root' => '',
 			'secure' => false,
 			'user' => 'foo',
-			'password' => 'hello',
+			'password' => 'heello',
 		]);
 		$owncloudStorageConfig->setMountPoint('/ownCloud');
 		$owncloudStorageConfig->setApplicableUsers(['']);
 		$owncloudStorageConfig->setAuthMechanism($authMechanism);
+
+		$definitionParameter = $this->createMock(DefinitionParameter::class);
+		$definitionParameter->method('getName')->willReturn('password');
+		$definitionParameter->method('getType')->willReturn(DefinitionParameter::VALUE_PASSWORD);
 		$backendOc = $this->createMock(Backend::class);
 		$backendOc->method('getText')
 			->willReturn('\OCA\Files_External\Lib\Storage\OwnCloud');
+		$backendOc->method('getParameters')->willReturn(['password' => $definitionParameter]);
 		$owncloudStorageConfig->setBackend($backendOc);
 
 		$personalStorageConfig->setBackendOptions([
 			'host' => 'localhost',
 			'root' => '/personal',
 			'user' => 'foobar',
-			'password' => 'hello'
+			'password' => 'hhello'
 		]);
 		$personalStorageConfig->setApplicableUsers([]);
 		$personalStorageConfig->setMountPoint('/MyPersonalSFTPMount');
 
 		$personalStorageConfig->setAuthMechanism($authMechanism);
 		$personalStorageConfig->setType(2);
+
+		$definitionParameter = $this->createMock(DefinitionParameter::class);
+		$definitionParameter->method('getName')->willReturn('password');
+		$definitionParameter->method('getType')->willReturn(DefinitionParameter::VALUE_PASSWORD);
+		$backend->method('getParameters')->willReturn(['password' => $definitionParameter]);
 		$backend = $this->createMock(Backend::class);
 		$backend->method('getText')
 			->willReturn('\OCA\Files_External\Lib\Storage\SFTP');
@@ -732,16 +748,21 @@ class ReportDataCollectorTest extends TestCase {
 			'host' => 'localhost',
 			'root' => '/personal2',
 			'user' => 'foobar',
-			'password' => 'hello'
+			'password' => 'hello!'
 		]);
 		$personalStorageConfig1->setApplicableUsers(['foo', 'bar']);
 		$personalStorageConfig1->setMountPoint('/MyPersonalOcMount');
 
 		$personalStorageConfig1->setAuthMechanism($authMechanism);
 		$personalStorageConfig1->setType(2);
+
+		$definitionParameter = $this->createMock(DefinitionParameter::class);
+		$definitionParameter->method('getName')->willReturn('password');
+		$definitionParameter->method('getType')->willReturn(DefinitionParameter::VALUE_PASSWORD);
 		$backendOc = $this->createMock(Backend::class);
 		$backendOc->method('getText')
 			->willReturn('\OCA\Files_External\Lib\Storage\OwnCloud');
+		$backendOc->method('getParameters')->willReturn(['password' => $definitionParameter]);
 		$personalStorageConfig1->setBackend($backendOc);
 
 		$this->globalStoragesService->method('getStorageForAllUsers')
