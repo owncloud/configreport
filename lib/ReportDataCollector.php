@@ -237,9 +237,7 @@ class ReportDataCollector {
 			}
 
 			$configuration = $mount->getBackendOptions();
-			if (isset($configuration['password'])) {
-				$configuration['password'] = \OCP\IConfig::SENSITIVE_VALUE;
-			}
+			$this->hideMountPasswords($mount, $configuration);
 			$mountsArray[] = [
 				'id' => $mount->getId(),
 				'mount_point' => $mount->getMountPoint(),
@@ -253,6 +251,28 @@ class ReportDataCollector {
 			];
 		}
 		return $mountsArray;
+	}
+
+	private function hideMountPasswords(IStorageConfig $mount, array &$configArray) {
+		$backend = $mount->getBackend();
+		$auth = $mount->getAuthMechanism();
+
+		$backendParameters = $backend->getParameters();
+		$authParameters = $auth->getParameters();
+
+		foreach ($configArray as $key => $value) {
+			if (
+				(
+					isset($backendParameters[$key]) &&
+					$backendParameters[$key]->getType() === \OCP\Files\External\DefinitionParameter::VALUE_PASSWORD
+				) || (
+					isset($authParameters[$key]) &&
+					$authParameters[$key]->getType() === \OCP\Files\External\DefinitionParameter::VALUE_PASSWORD
+				)
+			) {
+				$configArray[$key] = \OCP\IConfig::SENSITIVE_VALUE;
+			}
+		}
 	}
 
 	/**
