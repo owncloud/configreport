@@ -193,6 +193,12 @@ class ReportDataCollectorTest extends TestCase {
 							'null' => false,
 							'default' => '0',
 							'autoIncrement' => false
+						]],
+						['creation_time' => [
+							'type' => 'integer',
+							'null' => false,
+							'default' => '0',
+							'autoIncrement' => false
 						]]
 					],
 					'index' => [
@@ -319,6 +325,12 @@ class ReportDataCollectorTest extends TestCase {
 						]],
 						['state' => [
 							'type' => 'smallint',
+							'null' => false,
+							'default' => '0',
+							'autoIncrement' => false
+						]],
+						['creation_time' => [
+							'type' => 'integer',
 							'null' => false,
 							'default' => '0',
 							'autoIncrement' => false
@@ -451,6 +463,12 @@ class ReportDataCollectorTest extends TestCase {
 							'null' => false,
 							'default' => '0',
 							'autoIncrement' => false
+						]],
+						['creation_time' => [
+							'type' => 'integer',
+							'null' => false,
+							'default' => '0',
+							'autoIncrement' => false
 						]]
 					],
 					'index' => [
@@ -577,6 +595,12 @@ class ReportDataCollectorTest extends TestCase {
 						]],
 						['state' => [
 							'type' => 'smallint',
+							'null' => false,
+							'default' => '0',
+							'autoIncrement' => false
+						]],
+						['creation_time' => [
+							'type' => 'integer',
 							'null' => false,
 							'default' => '0',
 							'autoIncrement' => false
