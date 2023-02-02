@@ -474,7 +474,7 @@ class ReportDataCollector {
 
 		// Get the phpinfo, parse it, and record it (parts from http://www.php.net/manual/en/function.phpinfo.php#87463)
 		\ob_start();
-		\phpinfo(-1);
+		\phpinfo(INFO_ALL & ~INFO_ENVIRONMENT);
 
 		$phpinfo = \preg_replace(
 			['#^.*<body>(.*)</body>.*$#ms', '#<h2>PHP License</h2>.*$#ms',
