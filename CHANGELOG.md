@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased] 
 
--
+### Changed
+
+- Hide passwords from the config report [#183](https://github.com/owncloud/configreport/pull/183)
 
 ## [0.2.1] - 2022-04-07
 
