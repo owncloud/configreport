@@ -21,8 +21,11 @@
 
 namespace OCA\ConfigReport\Controller;
 
+use Google\Service\Analytics\Resource\Data;
 use OCA\ConfigReport\Http\ReportResponse;
 use OCA\ConfigReport\ReportDataCollector;
+use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Http\Response;
 use OCP\IConfig;
 use OCP\IRequest;
 use Test\TestCase;
@@ -69,5 +72,43 @@ class ReportControllerTest extends TestCase {
 		$this->reportDataCollector->method('getReportJson')->willReturn($expectedValue);
 		$result = $this->controller->getReport();
 		$this->assertInstanceOf(ReportResponse::class, $result);
+	}
+
+	public function testGetCli() {
+		$expectedValue = \json_encode([]);
+		$this->reportDataCollector->method('getReportJson')->willReturn($expectedValue);
+
+		// without auth-token
+
+		/** @var Response $result */
+		$result = $this->controller->fromCli();
+
+		$this->assertEquals(403, $result->getStatus());
+		$this->assertInstanceOf(DataResponse::class, $result);
+
+		// with auth-token
+		$this->config->method('getAppValue')->willReturn('secret');
+		$this->request->method('getParam')->willReturn('secret');
+
+		/** @var Response $result */
+		$result = $this->controller->fromCli();
+
+		$this->assertEquals(200, $result->getStatus());
+		$this->assertInstanceOf(ReportResponse::class, $result);
+	}
+
+	public function testGetCliWrongAuthToken() {
+		$expectedValue = \json_encode([]);
+		$this->reportDataCollector->method('getReportJson')->willReturn($expectedValue);
+
+		// with auth-token
+		$this->config->method('getAppValue')->willReturn('secret');
+		$this->request->method('getParam')->willReturn('wrong');
+
+		/** @var Response $result */
+		$result = $this->controller->fromCli();
+
+		$this->assertEquals(403, $result->getStatus());
+		$this->assertInstanceOf(DataResponse::class, $result);
 	}
 }

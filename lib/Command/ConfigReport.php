@@ -22,6 +22,7 @@ use OC\Helper\UserTypeHelper;
 use OCA\ConfigReport\ReportDataCollector;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -63,12 +64,39 @@ class ConfigReport extends Command {
 	protected function configure() {
 		$this
 			->setName('configreport:generate')
-			->setDescription('generates a configreport');
+			->setDescription('generates a configreport')
+			->addOption('web', 'w', InputOption::VALUE_NONE, 'Get web config-report');
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+		if ($input->getOption('web')) {
+			$report = $this->getWebReport();
+			$output->writeln($report);
+			return 0;
+		}
+
 		$report = $this->reportDataCollector->getReportJson();
 		$output->writeln($report);
 		return 0;
+	}
+
+	private function getWebReport() {
+		$cfg = \OC::$server->getConfig();
+		$token = \bin2hex(\random_bytes(32));
+
+		$cfg->setAppValue('configreport', 'token', $token);
+
+		$urlGen = \OC::$server->getURLGenerator();
+		$url = $urlGen->linkToRouteAbsolute('configreport.Report.fromCli');
+
+		$opts = ['http' => [
+			'method'  => 'POST',
+			'content' => \http_build_query(['token' => $token])
+		]];
+
+		$data =  \file_get_contents($url, false, \stream_context_create($opts));
+		$cfg->deleteAppValue('configreport', 'token');
+
+		return $data;
 	}
 }
