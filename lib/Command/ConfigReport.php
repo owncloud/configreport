@@ -66,7 +66,7 @@ class ConfigReport extends Command {
 			->setDescription('generates a configreport');
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$report = $this->reportDataCollector->getReportJson();
 		$output->writeln($report);
 		return 0;
