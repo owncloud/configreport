@@ -160,7 +160,6 @@ class ReportDataCollector {
 		$this->globalStoragesService = $globalStoragesService;
 
 		$event = new GenericEvent();
-		/* @phpstan-ignore-next-line */
 		$this->appConfigData = \OC::$server->getEventDispatcher()->dispatch($event, 'OCA\ConfigReport::loadData');
 		$this->obscuredkeys = [
 			'server_user',
