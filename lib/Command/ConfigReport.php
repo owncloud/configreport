@@ -28,7 +28,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package OCA\ConfigReport\Command
  */
 class ConfigReport extends Command {
-
 	/**
 	 * @var ReportDataCollector
 	 */

@@ -33,7 +33,6 @@ use OCP\Files\External\IStorageConfig;
  * @package OCA\ConfigReport\Report
  */
 class ReportDataCollector {
-
 	/**
 	 * @var Checker
 	 */

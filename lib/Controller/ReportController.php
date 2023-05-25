@@ -33,7 +33,6 @@ use OCP\IRequest;
  * @package OCA\ConfigReport\Controller
  */
 class ReportController extends Controller {
-
 	/**
 	 * @var IConfig
 	 */

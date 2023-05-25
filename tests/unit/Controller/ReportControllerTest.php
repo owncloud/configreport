@@ -33,7 +33,6 @@ use Test\TestCase;
  * @package OCA\ConfigReport\Controller
  */
 class ReportControllerTest extends TestCase {
-
 	/** @var IConfig */
 	private $config;
 	/** @var IRequest */

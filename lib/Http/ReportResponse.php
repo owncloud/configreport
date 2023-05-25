@@ -26,7 +26,6 @@ use OCP\AppFramework\Http\DownloadResponse;
  * @package OCA\ConfigReport\Http
  */
 class ReportResponse extends DownloadResponse {
-
 	/**
 	 * @var string $data
 	 */
