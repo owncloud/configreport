@@ -28,7 +28,6 @@ require_once 'bootstrap.php';
  * Context for config report specific steps
  */
 class ConfigReportContext implements Context {
-
 	/**
 	 * @var FeatureContext
 	 */

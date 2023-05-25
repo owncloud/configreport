@@ -14,7 +14,6 @@ use OCP\AppFramework\IAppContainer;
  * @package OCA\ConfigReport\AppInfo
  */
 class Application extends App {
-
 	/**
 	 * Application constructor.
 	 *
