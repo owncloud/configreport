@@ -8,3 +8,4 @@ parameters:
     -
       message: '#Property OCA\\ConfigReport\\Controller\\ReportController::\$config is never read, only written.#'
       path: lib/Controller/ReportController.php
+      count: 1
