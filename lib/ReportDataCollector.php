@@ -163,6 +163,7 @@ class ReportDataCollector {
 		$this->obscuredkeys = [
 			'server_user',
 			'wopi.token.key',
+			'wopi.proxy.key',
 		];
 	}
 
