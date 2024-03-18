@@ -7,7 +7,7 @@
 	<description>Generate a Config Report</description>
 	<summary>Generate a Config Report</summary>
 	<author>owncloud.org</author>
-	<version>0.2.2</version>
+	<version>0.3.0</version>
 	<default_enable/>
 	<types>
 		<filesystem/>
@@ -22,6 +22,9 @@
 	<settings>
 		<admin>OCA\ConfigReport\AdminPanel</admin>
 	</settings>
+	<background-jobs>
+		<job>OCA\ConfigReport\Telemetry\BackgroundJob</job>
+	</background-jobs>
 	<category>tools</category>
 	<documentation>
 		<admin>https://doc.owncloud.com/server/next/admin_manual/troubleshooting/providing_logs_and_config_files.html#generate-a-config-report</admin>
