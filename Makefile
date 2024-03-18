@@ -8,7 +8,7 @@ JSDOC=$(NODE_PREFIX)/node_modules/.bin/jsdoc
 
 app_name=$(notdir $(CURDIR))
 doc_files=README.md CHANGELOG.md LICENSE
-src_dirs=appinfo js lib templates
+src_dirs=appinfo js lib templates vendor
 all_src=$(src_dirs) $(doc_files)
 build_dir=$(CURDIR)/build
 dist_dir=$(build_dir)/dist
