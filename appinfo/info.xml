@@ -13,7 +13,8 @@
 		<filesystem/>
 	</types>
 	<dependencies>
-		<owncloud min-version="10.8" max-version="11" />
+		<owncloud min-version="10.12" max-version="11" />
+		<php min-version="7.4"/>
 	</dependencies>
 	<default_enable/>
 	<commands>
