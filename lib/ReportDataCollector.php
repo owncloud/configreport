@@ -22,6 +22,7 @@ use OC\IntegrityCheck\Checker;
 use OC\SystemConfig;
 use OC\User\Manager;
 use OCP\IAppConfig;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUser;
@@ -54,11 +55,6 @@ class ReportDataCollector {
 	private $userTypeHelper;
 
 	/**
-	 * @var string
-	 */
-	private $licenseKey;
-
-	/**
 	 * @var array
 	 */
 	private $version;
@@ -79,7 +75,7 @@ class ReportDataCollector {
 	private $displayName;
 
 	/**
-	 * @var \OC\SystemConfig
+	 * @var SystemConfig
 	 */
 	private $systemConfig;
 
@@ -113,29 +109,15 @@ class ReportDataCollector {
 	 */
 	private $obscuredkeys;
 
-	/**
-	 * @param Checker $integrityChecker
-	 * @param Manager $userManager
-	 * @param UserTypeHelper $userTypeHelper
-	 * @param IGroupManager $groupManager
-	 * @param array $version
-	 * @param string $versionString
-	 * @param string $editionString
-	 * @param string $displayName
-	 * @param SystemConfig $systemConfig
-	 * @param IAppConfig $appConfig
-	 * @param IDBConnection $connection
-	 * @param IGlobalStoragesService $globalStoragesService
-	 */
 	public function __construct(
 		Checker $integrityChecker,
 		Manager $userManager,
 		UserTypeHelper $userTypeHelper,
 		IGroupManager $groupManager,
 		array $version,
-		$versionString,
-		$editionString,
-		$displayName,
+		string $versionString,
+		string $editionString,
+		string $displayName,
 		SystemConfig $systemConfig,
 		IAppConfig $appConfig,
 		IDBConnection $connection,
@@ -145,7 +127,6 @@ class ReportDataCollector {
 		$this->userManager = $userManager;
 		$this->userTypeHelper = $userTypeHelper;
 		$this->groupManager = $groupManager;
-		$this->licenseKey = \OCP\IConfig::SENSITIVE_VALUE;
 
 		$this->version = $version;
 		$this->versionString = $versionString;
@@ -167,19 +148,14 @@ class ReportDataCollector {
 		];
 	}
 
-	/**
-	 * @param int $options
-	 * @param int $depth
-	 * @return string
-	 */
-	public function getReportJson($options = JSON_PRETTY_PRINT, $depth = 512) {
-		return \json_encode($this->getReport(), $options, $depth);
+	public function getReportJson(): string {
+		return \json_encode($this->getReport(), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
 	}
 
 	/**
 	 * @param array $report
 	 */
-	public function addEventListenerReportData(&$report) {
+	public function addEventListenerReportData(&$report): void {
 		foreach ($this->appConfigData->getArguments() as $index) {
 			foreach ($index as $innerKey => $innerVal) {
 				if (!\array_key_exists($innerKey, $report)) {
@@ -189,15 +165,9 @@ class ReportDataCollector {
 		}
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getReport() {
-		// TODO: add l10n (unused right now)
-		$l = \OC::$server->getL10N('config_report');
-
+	public function getReport(): array {
 		$report = [
-			'basic' => $this->getBasicDetailArray(),
+			'basic' => $this->getBasicDetailArray(IConfig::SENSITIVE_VALUE),
 			'stats' => $this->getStatsDetailArray(),
 			'config' => $this->getSystemConfigDetailArray(),
 			'integritychecker' => $this->getIntegrityCheckerDetailArray(),
@@ -215,10 +185,7 @@ class ReportDataCollector {
 		return $report;
 	}
 
-	/**
-	 * @return array
-	 */
-	private function getMountsArray() {
+	private function getMountsArray(): array {
 		/** @var IStorageConfig[] $mounts */
 		$mounts = $this->globalStoragesService->getStorageForAllUsers();
 
@@ -252,7 +219,7 @@ class ReportDataCollector {
 		return $mountsArray;
 	}
 
-	private function hideMountPasswords(IStorageConfig $mount, array &$configArray) {
+	private function hideMountPasswords(IStorageConfig $mount, array &$configArray): void {
 		$backend = $mount->getBackend();
 		$auth = $mount->getAuthMechanism();
 
@@ -269,15 +236,12 @@ class ReportDataCollector {
 					$authParameters[$key]->getType() === \OCP\Files\External\DefinitionParameter::VALUE_PASSWORD
 				)
 			) {
-				$configArray[$key] = \OCP\IConfig::SENSITIVE_VALUE;
+				$configArray[$key] = IConfig::SENSITIVE_VALUE;
 			}
 		}
 	}
 
-	/**
-	 * @return array
-	 */
-	private function getIntegrityCheckerDetailArray() {
+	private function getIntegrityCheckerDetailArray(): array {
 		return [
 			'passing' => $this->integrityChecker->hasPassedCheck(),
 			'enabled' => $this->integrityChecker->isCodeCheckEnforced(),
@@ -285,30 +249,23 @@ class ReportDataCollector {
 		];
 	}
 
-	/**
-	 * Basic report data
-	 * @return array
-	 */
-	private function getBasicDetailArray() {
+	private function getBasicDetailArray(string $licenseKey): array {
 		return [
-			'license key' => $this->licenseKey,
+			'license key' => $licenseKey,
 			'date' => \date('r'),
 			'ownCloud version' => \implode('.', $this->version),
 			'ownCloud version string' => $this->versionString,
 			'ownCloud edition' => $this->editionString,
 			'server OS' => PHP_OS,
 			'server OS version' => \php_uname(),
-			'server SAPI' => \php_sapi_name(),
-			'webserver version' => $_SERVER['SERVER_SOFTWARE'],
-			'hostname' => $_SERVER['HTTP_HOST'],
+			'server SAPI' => PHP_SAPI,
+			'webserver version' => $_SERVER['SERVER_SOFTWARE'] ?? '???',
+			'hostname' => $_SERVER['HTTP_HOST'] ?? '???',
 			'logged-in user' => $this->displayName,
 		];
 	}
 
-	/**
-	 * @return array
-	 */
-	private function getStatsDetailArray() {
+	private function getStatsDetailArray(): array {
 		$users = [];
 		$this->userManager->callForAllUsers(function (IUser $user) use (&$users) {
 			if (!isset($users[$user->getBackendClassName()])) {
@@ -343,10 +300,8 @@ class ReportDataCollector {
 			'groups' => $groupCount,
 		];
 	}
-	/**
-	* @return array
-	*/
-	private function getSystemConfigDetailArray() {
+
+	private function getSystemConfigDetailArray(): array {
 		$keys = $this->systemConfig->getKeys();
 		$result = [];
 		foreach ($keys as $key) {
@@ -359,36 +314,28 @@ class ReportDataCollector {
 	/**
 	 * Sanitize values from the given hash array by removing
 	 * sensitive values
-	 *
-	 * @param array $values hash array
-	 * @return array sanitized array
 	 */
-	private function sanitizeValues($values) {
+	private function sanitizeValues(array $values): array {
 		foreach ($values as $key => $value) {
 			if (\stripos($key, 'password') !== false) {
-				$values[$key] = \OCP\IConfig::SENSITIVE_VALUE;
+				$values[$key] = IConfig::SENSITIVE_VALUE;
 			}
 			if (\in_array($key, $this->obscuredkeys)) {
-				$values[$key] = \OCP\IConfig::SENSITIVE_VALUE;
+				$values[$key] = IConfig::SENSITIVE_VALUE;
 			}
 		}
 		return $values;
 	}
 
-	/**
-	 * @return array
-	 */
-	private function getCoreConfigArray() {
+	private function getCoreConfigArray(): array {
 		// Get core config data
 		$appConfig = $this->appConfig->getValues('core', false);
 		// this one is reported separately already
 		unset($appConfig['oc.integritycheck.checker']);
 		return $this->sanitizeValues($appConfig);
 	}
-	/**
-	 * @return array
-	 */
-	private function getAppsDetailArray() {
+
+	private function getAppsDetailArray(): array {
 		// Get app data
 		foreach ($this->apps as &$app) {
 			if ($app['active']) {
@@ -399,26 +346,18 @@ class ReportDataCollector {
 		return $this->apps;
 	}
 
-	/**
-	 * @return array
-	 */
-	private function getOcMigrationArray() {
+	private function getOcMigrationArray(): array {
 		//Get data from oc_migrations table
 		$queryBuilder = $this->connection->getQueryBuilder();
 		/* @phpstan-ignore-next-line @phan-suppress-next-line PhanDeprecatedFunction */
-		$results = $queryBuilder
+		return $queryBuilder
 			->select('app', 'version')
 			->from('migrations')
 			->execute()
 			->fetchAll();
-
-		return $results;
 	}
 
-	/**
-	 * @return array
-	 */
-	private function getOCTablesArray() {
+	private function getOCTablesArray(): array {
 		$ocTables = [];
 		//Get tables structure/description/schema from owncloud db
 		/* @phpstan-ignore-next-line @phan-suppress-next-line PhanUndeclaredMethod */
@@ -460,71 +399,7 @@ class ReportDataCollector {
 		return $ocTables;
 	}
 
-	/**
-	 * @return array
-	 */
-	private function getPhpInfoDetailArray() {
-		$sensitiveServerConfigs = [
-			'HTTP_COOKIE',
-			'PATH',
-			'Cookie',
-			'include_path',
-		];
-
-		// Get the phpinfo, parse it, and record it (parts from http://www.php.net/manual/en/function.phpinfo.php#87463)
-		\ob_start();
-		\phpinfo(INFO_ALL & ~INFO_ENVIRONMENT);
-
-		$phpinfo = \preg_replace(
-			['#^.*<body>(.*)</body>.*$#ms', '#<h2>PHP License</h2>.*$#ms',
-				'#<h1>Configuration</h1>#', "#\r?\n#", "#</(h1|h2|h3|tr)>#", '# +<#',
-				"#[ \t]+#", '#&nbsp;#', '#  +#', '# class=".*?"#', '%&#039;%',
-				'#<tr>(?:.*?)" src="(?:.*?)=(.*?)" alt="PHP Logo" /></a>'
-				. '<h1>PHP Version (.*?)</h1>(?:\n+?)</td></tr>#',
-				'#<h1><a href="(?:.*?)\?=(.*?)">PHP Credits</a></h1>#',
-				'#<tr>(?:.*?)" src="(?:.*?)=(.*?)"(?:.*?)Zend Engine (.*?),(?:.*?)</tr>#',
-				"# +#", '#<tr>#', '#</tr>#'],
-			['$1', '', '', '', '</$1>' . "\n", '<', ' ', ' ', ' ', '', ' ',
-				'<h2>PHP Configuration</h2>' . "\n" . '<tr><td>PHP Version</td><td>$2</td></tr>' .
-				"\n" . '<tr><td>PHP Egg</td><td>$1</td></tr>',
-				'<tr><td>PHP Credits Egg</td><td>$1</td></tr>',
-				'<tr><td>Zend Engine</td><td>$2</td></tr>' . "\n" .
-				'<tr><td>Zend Egg</td><td>$1</td></tr>', ' ', '%S%', '%E%'],
-			\ob_get_clean()
-		);
-
-		$sections = \explode('<h2>', \strip_tags($phpinfo, '<h2><th><td>'));
-		unset($sections[0]);
-
-		$result = [];
-		$sensitiveServerConfigs = \array_flip($sensitiveServerConfigs);
-		foreach ($sections as $section) {
-			$n = \substr($section, 0, \strpos($section, '</h2>'));
-			if ($n === 'PHP Variables') {
-				continue;
-			}
-			\preg_match_all(
-				'#%S%(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?%E%#',
-				$section,
-				$matches,
-				PREG_SET_ORDER
-			);
-			foreach ($matches as $match) {
-				if (isset($sensitiveServerConfigs[$match[1]])) {
-					continue;
-					// filter all key which contain 'password'
-				}
-				if (!isset($match[3])) {
-					$value = isset($match[2]) ? $match[2] : null;
-				} elseif ($match[2] == $match[3]) {
-					$value = $match[2];
-				} else {
-					$value = \array_slice($match, 2);
-				}
-				$result[$n][$match[1]] = $value;
-			}
-		}
-
-		return $result;
+	private function getPhpInfoDetailArray(): array {
+		return (new PHPInfo())->parsePhpInfo();
 	}
 }
