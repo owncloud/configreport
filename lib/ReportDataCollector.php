@@ -109,6 +109,9 @@ class ReportDataCollector {
 	 */
 	private $obscuredkeys;
 
+	private const ETC_OS_RELEASE = '/etc/os-release';
+	private const ETC_LSB_RELEASE = '/etc/lsb-release';
+
 	public function __construct(
 		Checker $integrityChecker,
 		Manager $userManager,
@@ -262,6 +265,7 @@ class ReportDataCollector {
 			'webserver version' => $_SERVER['SERVER_SOFTWARE'] ?? '???',
 			'hostname' => $_SERVER['HTTP_HOST'] ?? '???',
 			'logged-in user' => $this->displayName,
+			'distro' => $this->getLinuxDistribution(),
 		];
 	}
 
@@ -397,6 +401,18 @@ class ReportDataCollector {
 		}
 
 		return $ocTables;
+	}
+
+	private function getLinuxDistribution(): string {
+		if (file_exists(self::ETC_OS_RELEASE)) {
+			$content = file_get_contents(self::ETC_OS_RELEASE);
+			return $content === false ? "" : $content;
+		}
+		if (file_exists(self::ETC_LSB_RELEASE)) {
+			$content = file_get_contents(self::ETC_LSB_RELEASE);
+			return $content === false ? "" : $content;
+		}
+		return "";
 	}
 
 	private function getPhpInfoDetailArray(): array {
