@@ -266,6 +266,7 @@ class ReportDataCollector {
 			'hostname' => $_SERVER['HTTP_HOST'] ?? '???',
 			'logged-in user' => $this->displayName,
 			'distro' => $this->getLinuxDistribution(),
+			'docker' => $this->isDocker() ? 'yes' : 'no',
 		];
 	}
 
@@ -417,5 +418,9 @@ class ReportDataCollector {
 
 	private function getPhpInfoDetailArray(): array {
 		return (new PHPInfo())->parsePhpInfo();
+	}
+
+	private function isDocker(): bool {
+		return file_exists('/.dockerenv');
 	}
 }
