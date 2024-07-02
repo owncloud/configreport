@@ -27,24 +27,24 @@ use OCP\Settings\ISettings;
 use OCP\Template;
 
 class AdminPanel implements ISettings {
-	/** @var IURLGenerator  */
-	protected $urlGenerator;
+    /** @var IURLGenerator  */
+    protected $urlGenerator;
 
-	public function __construct(IURLGenerator $urlGenerator) {
-		$this->urlGenerator = $urlGenerator;
-	}
+    public function __construct(IURLGenerator $urlGenerator) {
+        $this->urlGenerator = $urlGenerator;
+    }
 
-	public function getPanel() {
-		$tmpl = new Template('configreport', 'settings/admin');
-		$tmpl->assign('urlGenerator', $this->urlGenerator);
-		return $tmpl;
-	}
+    public function getPanel() {
+        $tmpl = new Template('configreport', 'settings/admin');
+        $tmpl->assign('urlGenerator', $this->urlGenerator);
+        return $tmpl;
+    }
 
-	public function getPriority() {
-		return 10;
-	}
+    public function getPriority() {
+        return 10;
+    }
 
-	public function getSectionID() {
-		return 'general';
-	}
+    public function getSectionID() {
+        return 'general';
+    }
 }

@@ -26,31 +26,31 @@ use OCP\AppFramework\Http\DownloadResponse;
  * @package OCA\ConfigReport\Http
  */
 class ReportResponse extends DownloadResponse {
-	/**
-	 * @var string $data
-	 */
-	private $data;
+    /**
+     * @var string $data
+     */
+    private $data;
 
-	/**
-	 * ReportResponse constructor.
-	 *
-	 * @param string $fileName
-	 * @param string $contentType
-	 * @param string $data
-	 */
-	public function __construct($fileName, $contentType, $data) {
-		$this->data = $data;
+    /**
+     * ReportResponse constructor.
+     *
+     * @param string $fileName
+     * @param string $contentType
+     * @param string $data
+     */
+    public function __construct($fileName, $contentType, $data) {
+        $this->data = $data;
 
-		$fileName = $fileName ? $fileName : 'config_report_' . \date('Ymd') . '.json';
-		$contentType = $contentType ? $contentType : 'text/json';
+        $fileName = $fileName ? $fileName : 'config_report_' . \date('Ymd') . '.json';
+        $contentType = $contentType ? $contentType : 'text/json';
 
-		parent::__construct($fileName, $contentType);
-	}
+        parent::__construct($fileName, $contentType);
+    }
 
-	/**
-	 * @return string
-	 */
-	public function render() {
-		return $this->data;
-	}
+    /**
+     * @return string
+     */
+    public function render() {
+        return $this->data;
+    }
 }

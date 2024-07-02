@@ -38,24 +38,24 @@ use Test\TestCase;
 use OCP\Files\External\Service\IGlobalStoragesService;
 
 class PHPInfoTest extends TestCase {
-	public function testText(): void {
-		$phpInfoText = file_get_contents(__DIR__ . '/data/phpinfo.txt');
+    public function testText(): void {
+        $phpInfoText = file_get_contents(__DIR__ . '/data/phpinfo.txt');
 
-		$p = new PHPInfo();
-		$d = $p->parse($phpInfoText);
-		self::assertEquals('7.4.33', $d['Configuration']['Core']['PHP Version']);
-		self::assertArrayNotHasKey('include_path', $d['Configuration']['Core']);
-		self::assertArrayNotHasKey('PHP Variables', $d);
-	}
+        $p = new PHPInfo();
+        $d = $p->parse($phpInfoText);
+        self::assertEquals('7.4.33', $d['Configuration']['Core']['PHP Version']);
+        self::assertArrayNotHasKey('include_path', $d['Configuration']['Core']);
+        self::assertArrayNotHasKey('PHP Variables', $d);
+    }
 
-	public function testHtml(): void {
-		$phpInfoText = file_get_contents(__DIR__ . '/data/phpinfo.html');
+    public function testHtml(): void {
+        $phpInfoText = file_get_contents(__DIR__ . '/data/phpinfo.html');
 
-		$p = new PHPInfo();
-		$d = $p->parse($phpInfoText);
-		# testing one element
-		self::assertEquals('8.3.8', $d['Core']['PHP Version']);
-		self::assertArrayNotHasKey('include_path', $d['Core']);
-		self::assertArrayNotHasKey('PHP Variables', $d);
-	}
+        $p = new PHPInfo();
+        $d = $p->parse($phpInfoText);
+        # testing one element
+        self::assertEquals('8.3.8', $d['Core']['PHP Version']);
+        self::assertArrayNotHasKey('include_path', $d['Core']);
+        self::assertArrayNotHasKey('PHP Variables', $d);
+    }
 }

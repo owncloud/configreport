@@ -33,40 +33,40 @@ use OCP\IRequest;
  * @package OCA\ConfigReport\Controller
  */
 class ReportController extends Controller {
-	/**
-	 * @var IConfig
-	 */
-	private $config;
+    /**
+     * @var IConfig
+     */
+    private $config;
 
-	/**
-	 * @var ReportDataCollector
-	 */
-	private $reportDataCollector;
+    /**
+     * @var ReportDataCollector
+     */
+    private $reportDataCollector;
 
-	/**
-	 * @param string $AppName
-	 * @param IRequest $request
-	 * @param IConfig $config
-	 * @param ReportDataCollector $reportDataCollector
-	 */
-	public function __construct(
-		$AppName,
-		IRequest $request,
-		IConfig $config,
-		ReportDataCollector $reportDataCollector
-	) {
-		$this->config = $config;
-		$this->reportDataCollector = $reportDataCollector;
-		parent::__construct($AppName, $request);
-	}
+    /**
+     * @param string $AppName
+     * @param IRequest $request
+     * @param IConfig $config
+     * @param ReportDataCollector $reportDataCollector
+     */
+    public function __construct(
+        $AppName,
+        IRequest $request,
+        IConfig $config,
+        ReportDataCollector $reportDataCollector
+    ) {
+        $this->config = $config;
+        $this->reportDataCollector = $reportDataCollector;
+        parent::__construct($AppName, $request);
+    }
 
-	/**
-	 * AJAX handler for getting the config report
-	 *
-	 * @NoCSRFRequired
-	 * @return ReportResponse with the report
-	 */
-	public function getReport() {
-		return new ReportResponse('', '', $this->reportDataCollector->getReportJson());
-	}
+    /**
+     * AJAX handler for getting the config report
+     *
+     * @NoCSRFRequired
+     * @return ReportResponse with the report
+     */
+    public function getReport() {
+        return new ReportResponse('', '', $this->reportDataCollector->getReportJson());
+    }
 }

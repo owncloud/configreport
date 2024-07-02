@@ -33,40 +33,40 @@ use Test\TestCase;
  * @package OCA\ConfigReport\Controller
  */
 class ReportControllerTest extends TestCase {
-	/** @var IConfig */
-	private $config;
-	/** @var IRequest */
-	private $request;
-	/** @var ReportController */
-	private $controller;
-	/** @var ReportDataCollector */
-	private $reportDataCollector;
+    /** @var IConfig */
+    private $config;
+    /** @var IRequest */
+    private $request;
+    /** @var ReportController */
+    private $controller;
+    /** @var ReportDataCollector */
+    private $reportDataCollector;
 
-	protected function setUp(): void {
-		parent::setUp();
-		$this->config = $this->getMockBuilder(IConfig::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$this->request = $this->getMockBuilder(IRequest::class)
-			->disableOriginalConstructor()
-			->getMock();
+    protected function setUp(): void {
+        parent::setUp();
+        $this->config = $this->getMockBuilder(IConfig::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->request = $this->getMockBuilder(IRequest::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-		$this->reportDataCollector = $this->getMockBuilder(ReportDataCollector::class)
-			->disableOriginalConstructor()
-			->getMock();
+        $this->reportDataCollector = $this->getMockBuilder(ReportDataCollector::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-		$this->controller = new ReportController(
-			'configreport',
-			$this->request,
-			$this->config,
-			$this->reportDataCollector
-		);
-	}
+        $this->controller = new ReportController(
+            'configreport',
+            $this->request,
+            $this->config,
+            $this->reportDataCollector
+        );
+    }
 
-	public function testGetReport() {
-		$expectedValue = \json_encode([]);
-		$this->reportDataCollector->method('getReportJson')->willReturn($expectedValue);
-		$result = $this->controller->getReport();
-		$this->assertInstanceOf(ReportResponse::class, $result);
-	}
+    public function testGetReport() {
+        $expectedValue = \json_encode([]);
+        $this->reportDataCollector->method('getReportJson')->willReturn($expectedValue);
+        $result = $this->controller->getReport();
+        $this->assertInstanceOf(ReportResponse::class, $result);
+    }
 }

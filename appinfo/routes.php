@@ -24,14 +24,14 @@ namespace OCA\ConfigReport\AppInfo;
 $application = new Application();
 
 $application->registerRoutes(
-	$this,
-	[
-		'routes' => [
-			[
-				'name' => 'Report#getReport',
-				'url' => '/report',
-				'verb' => 'GET',
-			],
-		],
-	]
+    $this,
+    [
+        'routes' => [
+            [
+                'name' => 'Report#getReport',
+                'url' => '/report',
+                'verb' => 'GET',
+            ],
+        ],
+    ]
 );
