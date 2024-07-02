@@ -28,22 +28,7 @@ class Application extends App {
 		$container = $this->getContainer();
 
 		$container->registerService('ReportDataCollector', function ($c) {
-			return new ReportDataCollector(
-				\OC::$server->getIntegrityCodeChecker(),
-				\OC::$server->getUserManager(),
-				new UserTypeHelper(),
-				\OC::$server->getGroupManager(),
-				\OC_Util::getVersion(),
-				\OC_Util::getVersionString(),
-				\OC_Util::getEditionString(),
-				/* @phan-suppress-next-line PhanDeprecatedFunction */
-				\OCP\User::getDisplayName(),
-				/* @phan-suppress-next-line PhanAccessMethodInternal */
-				\OC::$server->getSystemConfig(),
-				\OC::$server->getAppConfig(),
-				\OC::$server->getDatabaseConnection(),
-				\OC::$server->getGlobalStoragesService()
-			);
+			return self::getCollector();
 		});
 
 		$container->registerService('ReportController', function (IAppContainer $c) {
@@ -55,5 +40,24 @@ class Application extends App {
 				$c->query('ReportDataCollector')
 			);
 		});
+	}
+
+	public static function getCollector(): ReportDataCollector {
+		return new ReportDataCollector(
+			\OC::$server->getIntegrityCodeChecker(),
+			\OC::$server->getUserManager(),
+			new UserTypeHelper(),
+			\OC::$server->getGroupManager(),
+			\OC_Util::getVersion(),
+			\OC_Util::getVersionString(),
+			\OC_Util::getEditionString(),
+			/* @phan-suppress-next-line PhanDeprecatedFunction */
+			\OCP\User::getDisplayName(),
+			/* @phan-suppress-next-line PhanAccessMethodInternal */
+			\OC::$server->getSystemConfig(),
+			\OC::$server->getAppConfig(),
+			\OC::$server->getDatabaseConnection(),
+			\OC::$server->getGlobalStoragesService()
+		);
 	}
 }
