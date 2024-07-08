@@ -4,8 +4,16 @@ All notable changes to this app will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased] 
+## [0.3.0] - 2024-07-08
 
+### Added
+- [#197](https://github.com/owncloud/configreport/pull/197) - feat: add daily transmission of config report to ownCloud/kiteworks for business intelligence
+- [#200](https://github.com/owncloud/configreport/pull/200) - feat: read /etc/os-release or /etc/lsb-release to get Linux distro information
+- [#201](https://github.com/owncloud/configreport/pull/201) - feat: add information to basic report data if running in docker
+
+### Changed
+- [#199](https://github.com/owncloud/configreport/pull/199) - fix: process phpinfo() in cli mode as well
+- Depenedency updates, copyright headers added.
 
 
 ## [0.2.2]  - 2023-08-08
@@ -41,6 +49,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Drop PHP 5.6 support
 
 [Unreleased]: https://github.com/owncloud/configreport/compare/v0.2.2..master
+[0.3.0]: https://github.com/owncloud/configreport/compare/v0.2.2..v0.3.0
 [0.2.2]: https://github.com/owncloud/configreport/compare/v0.2.1..v0.2.2
 [0.2.1]: https://github.com/owncloud/configreport/compare/v0.2.0..v0.2.1
 
