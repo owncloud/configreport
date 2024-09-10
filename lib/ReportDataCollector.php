@@ -17,8 +17,11 @@
  */
 
 namespace OCA\ConfigReport;
+use OC\Files\Filesystem;
+use OC\Files\ObjectStore\ObjectStoreStorage;
 use OC\Helper\UserTypeHelper;
 use OC\IntegrityCheck\Checker;
+use OC\Share\Constants;
 use OC\SystemConfig;
 use OC\User\Manager;
 use OCP\IAppConfig;
@@ -192,6 +195,10 @@ class ReportDataCollector {
 		return [
 			'basic' => $this->getBasicDetailArray($licenseKey),
 			'stats' => $this->getStatsDetailArray(),
+			'apps' => $this->getAppsSimplifiedArray(),
+			'shares' => $this->getShareOverview(),
+			'db' => $this->getTableOverview(),
+			'storage' => $this->getStorageOverview(),
 			'config' => $this->getSystemConfigDetailArray(),
 			'mounts' => $this->getMountsSimplified(),
 			'phpinfo' => $this->getPhpInfoDetailArray()
@@ -379,6 +386,14 @@ class ReportDataCollector {
 		}
 		return $this->apps;
 	}
+	private function getAppsSimplifiedArray(): array {
+		$active_apps = array_filter($this->apps, static function ($app) {
+			return $app['active'];
+		});
+		return array_map(static function ($app) {
+			return ['name' => $app['name'], 'version' => $app['version']];
+		}, $active_apps);
+	}
 
 	private function getOcMigrationArray(): array {
 		//Get data from oc_migrations table
@@ -451,5 +466,59 @@ class ReportDataCollector {
 
 	private function isDocker(): bool {
 		return file_exists('/.dockerenv');
+	}
+
+	private function getShareOverview(): array {
+		$share_types = [
+			'user-shares' => Constants::SHARE_TYPE_USER,
+			'group-shares' => Constants::SHARE_TYPE_GROUP,
+			'link-shares' => Constants::SHARE_TYPE_LINK,
+			'guest-shares' => Constants::SHARE_TYPE_GUEST,
+			'remote-shares' => Constants::SHARE_TYPE_REMOTE,
+			'remote-group-shares' => Constants::SHARE_TYPE_REMOTE_GROUP,
+		];
+		$overview = [];
+		foreach ($share_types as $name => $share_type) {
+			$statement = $this->connection->prepare("select count(*) from `*PREFIX*share` where `share_type` = ?");
+			$statement->execute([$share_type]);
+
+			/* @phan-suppress-next-line PhanDeprecatedFunction */
+			$row = $statement->fetch();
+			$overview[$name] = (int)($row['count(*)'] ?? 0);
+
+			/* @phan-suppress-next-line PhanDeprecatedFunction */
+			$statement->closeCursor();
+		}
+
+		return $overview;
+	}
+
+	private function getTableOverview(): array {
+		$overview = [];
+		$schema = $this->connection->createSchema();
+		$tables = $schema->getTables();
+		foreach ($tables as $table) {
+			$name = $table->getName();
+			$statement = $this->connection->prepare("select count(*) from `$name`");
+			$statement->execute([]);
+
+			/* @phan-suppress-next-line PhanDeprecatedFunction */
+			$row = $statement->fetch();
+			$overview[$name] = (int)($row['count(*)'] ?? 0);
+			/* @phan-suppress-next-line PhanDeprecatedFunction */
+			$statement->closeCursor();
+		}
+		return $overview;
+	}
+
+	private function getStorageOverview(): array {
+		$isObjectStore = Filesystem::getStorage('/')->instanceOfStorage(ObjectStoreStorage::class);
+		$storage = new Storage($this->connection);
+		$usedStorage = $storage->getUsedTotalSpace();
+
+		return [
+			'primary_object_store' => $isObjectStore,
+			'used_storage' => $usedStorage
+		];
 	}
 }
