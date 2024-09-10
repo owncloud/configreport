@@ -2,7 +2,7 @@
   "name": "owncloud/configreport",
   "config" : {
     "platform": {
-      "php": "7.3"
+      "php": "7.4"
     },
     "allow-plugins": {
       "bamarni/composer-bin-plugin": true
@@ -12,6 +12,8 @@
     "ramsey/uuid": "^4.2"
   },
   "require-dev": {
+    "roave/security-advisories": "dev-latest"
+    ,
     "bamarni/composer-bin-plugin": "^1.8"
   },
   "extra": {
