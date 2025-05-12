@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 
+## [0.3.1] - 2025-05-12
+
+### Changed
+- [#208](https://github.com/owncloud/configreport/pull/208) - feat: add more telementry data: apps, shares, tables and storage
+
 
 ## [0.3.0] - 2024-07-08
 
@@ -52,7 +57,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Decouple from core, switching to own release cycle
 - Drop PHP 5.6 support
 
-[Unreleased]: https://github.com/owncloud/configreport/compare/v0.3.0..master
+[Unreleased]: https://github.com/owncloud/configreport/compare/v0.3.1..master
+[0.3.1]: https://github.com/owncloud/configreport/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/owncloud/configreport/compare/v0.2.2..v0.3.0
 [0.2.2]: https://github.com/owncloud/configreport/compare/v0.2.1..v0.2.2
 [0.2.1]: https://github.com/owncloud/configreport/compare/v0.2.0..v0.2.1
