@@ -7,7 +7,7 @@
 	<description>Generate a Config Report</description>
 	<summary>Generate a Config Report</summary>
 	<author>owncloud.org</author>
-	<version>0.3.0</version>
+	<version>0.3.1</version>
 	<default_enable/>
 	<types>
 		<filesystem/>
