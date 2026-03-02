@@ -2,8 +2,9 @@
 
 namespace OCA\ConfigReport;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\OraclePlatform;
+use Doctrine\DBAL\Result;
 use OCP\IDBConnection;
 
 class Storage {
@@ -37,19 +38,19 @@ class Storage {
 			// only storages of users (exclude external storage)
 			// we cannot just check for "files" path in filecache as external storages
 			// can have such folder mounted
-			if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
+			if ($this->connection->getDatabasePlatform() instanceof MySQLPlatform) {
 				$qb->andWhere("(`st`.`id` LIKE CONCAT('%::', `mt`.`user_id`) or `st`.`id` LIKE CONCAT('object::user:', `mt`.`user_id`))");
 			} else {
 				$qb->andWhere("(`st`.`id` LIKE '%::' || `mt`.`user_id` or `st`.`id` LIKE 'object::user:' || `mt`.`user_id`)");
 			}
 
-			$statement = $qb->execute();
+			$result = $qb->execute();
 			/* @phan-suppress-next-line PhanDeprecatedFunction */
-			return (int)$statement->fetch()['totalSize'];
+			return (int)$result->fetch()['totalSize'];
 		} finally {
-			if ($statement) {
+			if (isset($result) && ($result instanceof Result)) {
 				/* @phan-suppress-next-line PhanDeprecatedFunction */
-				$statement->closeCursor();
+				$result->free();
 			}
 		}
 	}
