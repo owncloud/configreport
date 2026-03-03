@@ -410,7 +410,7 @@ class ReportDataCollector {
 		$ocTables = [];
 		//Get tables structure/description/schema from owncloud db
 		/* @phpstan-ignore-next-line @phan-suppress-next-line PhanUndeclaredMethod */
-		$schemaManager = $this->connection->getSchemaManager();
+		$schemaManager = $this->connection->createSchemaManager();
 		$tableNames = $schemaManager->listTableNames();
 		foreach ($tableNames as $tableName) {
 			$ocTables['tableNames'][$tableName] = [];
@@ -440,8 +440,12 @@ class ReportDataCollector {
 			} else {
 				$primaryColumns = [];
 			}
+			$primaryColumnNames = [];
+			foreach ($primaryColumns as $primaryColumn) {
+				$primaryColumnNames[] = $primaryColumn->getName();
+			}
 			$ocTables['tableNames'][$tableName][] = [
-				'primaryColumns' => $primaryColumns
+				'primaryColumns' => $primaryColumnNames,
 			];
 		}
 
