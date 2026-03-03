@@ -68,6 +68,9 @@ config = {
             "suites": [
                 "apiConfigReport",
             ],
+            "servers": [
+                "daily-master-qa",
+            ],
             "databases": [
                 "mariadb:10.2",
                 "postgres:9.4",
