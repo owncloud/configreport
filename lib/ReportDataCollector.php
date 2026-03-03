@@ -410,7 +410,7 @@ class ReportDataCollector {
 		$ocTables = [];
 		//Get tables structure/description/schema from owncloud db
 		/* @phpstan-ignore-next-line @phan-suppress-next-line PhanUndeclaredMethod */
-		$schemaManager = $this->connection->getSchemaManager();
+		$schemaManager = $this->connection->createSchemaManager();
 		$tableNames = $schemaManager->listTableNames();
 		foreach ($tableNames as $tableName) {
 			$ocTables['tableNames'][$tableName] = [];
@@ -440,8 +440,12 @@ class ReportDataCollector {
 			} else {
 				$primaryColumns = [];
 			}
+			$primaryColumnNames = [];
+			foreach ($primaryColumns as $primaryColumn) {
+				$primaryColumnNames[] = $primaryColumn->getName();
+			}
 			$ocTables['tableNames'][$tableName][] = [
-				'primaryColumns' => $primaryColumns
+				'primaryColumns' => $primaryColumnNames,
 			];
 		}
 
@@ -480,14 +484,12 @@ class ReportDataCollector {
 		$overview = [];
 		foreach ($share_types as $name => $share_type) {
 			$statement = $this->connection->prepare("select count(*) from `*PREFIX*share` where `share_type` = ?");
-			$statement->execute([$share_type]);
+			$result = $statement->executeQuery([$share_type]);
 
-			/* @phan-suppress-next-line PhanDeprecatedFunction */
-			$row = $statement->fetch();
+			$row = $result->fetchAssociative();
 			$overview[$name] = (int)($row['count(*)'] ?? 0);
 
-			/* @phan-suppress-next-line PhanDeprecatedFunction */
-			$statement->closeCursor();
+			$result->free();
 		}
 
 		return $overview;
@@ -500,13 +502,13 @@ class ReportDataCollector {
 		foreach ($tables as $table) {
 			$name = $table->getName();
 			$statement = $this->connection->prepare("select count(*) from `$name`");
-			$statement->execute([]);
+			$result = $statement->executeQuery([]);
 
 			/* @phan-suppress-next-line PhanDeprecatedFunction */
-			$row = $statement->fetch();
+			$row = $result->fetchAssociative();
 			$overview[$name] = (int)($row['count(*)'] ?? 0);
 			/* @phan-suppress-next-line PhanDeprecatedFunction */
-			$statement->closeCursor();
+			$result->free();
 		}
 		return $overview;
 	}
