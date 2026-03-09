@@ -38,7 +38,7 @@ class ConfigReport extends Command {
 	 * @param OutputInterface $output
 	 * @return int
 	 */
-	public function run(InputInterface $input, OutputInterface $output) {
+	public function run(InputInterface $input, OutputInterface $output): int {
 		$this->reportDataCollector = new ReportDataCollector(
 			\OC::$server->getIntegrityCodeChecker(),
 			\OC::$server->getUserManager(),
