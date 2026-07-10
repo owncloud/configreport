@@ -14,7 +14,7 @@ This file provides context for AI coding agents (Claude Code, GitHub Copilot, Cu
 - `appinfo/` - ownCloud app metadata and registration
 - `templates/` - Server-side templates
 - `js/` - Frontend JavaScript
-- `tests/` - PHPUnit test suite
+- `tests/` - PHPUnit and acceptance test suite
 - `Makefile` - Build and test automation
 - `composer.json` - PHP dependencies
 - `phpcs.xml` - PHP_CodeSniffer configuration
