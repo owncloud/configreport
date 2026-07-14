@@ -9,7 +9,7 @@
     }
   },
   "require": {
-    "ramsey/uuid": "^4.2"
+    "ramsey/uuid": "^4.9"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
