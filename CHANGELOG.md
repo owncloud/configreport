@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 
+## [0.4.1] - 2026-07-20
+
+### Fixed
+- Strip stray `.git` directories from `vendor/` in the release tarball. A
+  source/prefer-source composer install could leave bundled dependencies
+  (brick/math, ramsey/uuid) as full git clones; the volatile `.git/index`
+  broke the app's integrity signature during a server release build.
+
+
 ## [0.3.1] - 2025-05-12
 
 ### Changed
