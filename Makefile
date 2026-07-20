@@ -67,6 +67,12 @@ $(bower_deps): $(BOWER)
 $(dist_dir)/$(app_name): $(composer_deps) $(bower_deps)
 	rm -Rf $@; mkdir -p $@
 	cp -R $(all_src) $@
+	# Strip any VCS metadata that a source/prefer-source composer install can
+	# leave inside vendor/ (e.g. brick/math, ramsey/uuid as git clones). A .git
+	# dir must never ship in a release: .git/index is volatile, so any later git
+	# touch rewrites it and breaks the app's integrity signature. Remove before
+	# signing so the manifest never references these files.
+	find $@ -name .git -prune -exec rm -Rf {} +
 
 ifdef CAN_SIGN
 	$(sign) --path="$(dist_dir)/$(app_name)"
