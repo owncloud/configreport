@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 
+## [0.4.2] - 2026-07-22
+
+### Changed
+- Maintenance release re-signed with the ownCloud G2 code-signing certificate for the ownCloud 11.0.0 release.
+
 ## [0.4.1] - 2026-07-20
 
 ### Fixed
@@ -66,9 +71,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Decouple from core, switching to own release cycle
 - Drop PHP 5.6 support
 
-[Unreleased]: https://github.com/owncloud/configreport/compare/v0.3.1..master
+[Unreleased]: https://github.com/owncloud/configreport/compare/v0.4.2..master
+[0.4.2]: https://github.com/owncloud/configreport/compare/v0.4.1..v0.4.2
+[0.4.1]: https://github.com/owncloud/configreport/compare/v0.3.1..v0.4.1
 [0.3.1]: https://github.com/owncloud/configreport/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/owncloud/configreport/compare/v0.2.2..v0.3.0
 [0.2.2]: https://github.com/owncloud/configreport/compare/v0.2.1..v0.2.2
 [0.2.1]: https://github.com/owncloud/configreport/compare/v0.2.0..v0.2.1
-
