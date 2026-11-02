@@ -12,8 +12,6 @@
     "ramsey/uuid": "^4.9"
   },
   "require-dev": {
-    "roave/security-advisories": "dev-latest"
-    ,
     "bamarni/composer-bin-plugin": "^1.8"
   },
   "extra": {
